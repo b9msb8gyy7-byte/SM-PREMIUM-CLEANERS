@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Cleaning Management UK</title>
+  
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Cleaning App">
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: { 50: '#f0f9ff', 500: '#0284c7', 600: '#0369a1', 700: '#075985' }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { -webkit-tap-highlight-color: transparent; }
+  </style>
+</head>
+<body class="bg-gray-100 text-gray-800 select-none pb-24">
+
+  <!-- Cabeçalho -->
+  <header class="bg-brand-600 text-white p-4 pt-12 sticky top-0 z-50 shadow-md flex justify-between items-center">
+    <div>
+      <h1 class="text-xl font-bold tracking-tight">Cleaning Schedule</h1>
+      <p class="text-xs text-brand-50 font-medium">Reino Unido (£)</p>
+    </div>
+    <div class="flex bg-brand-700 rounded-lg p-1 text-xs">
+      <button onclick="switchWeek('semana1')" id="btn-sem1" class="px-3 py-1 rounded-md font-semibold bg-white text-brand-700 shadow">Semana 1</button>
+      <button onclick="switchWeek('semana2')" id="btn-sem2" class="px-3 py-1 rounded-md font-semibold text-white">Semana 2</button>
+    </div>
+  </header>
+
+  <!-- Filtro por Dia da Semana -->
+  <nav class="bg-white border-b border-gray-200 px-2 py-3 flex justify-around text-sm font-medium sticky top-24 z-40">
+    <button onclick="renderDay('segunda')" class="day-btn px-3 py-1 rounded-full bg-brand-50 text-brand-600 font-bold" data-day="segunda">Seg</button>
+    <button onclick="renderDay('terca')" class="day-btn px-3 py-1 rounded-full text-gray-500" data-day="terca">Ter</button>
+    <button onclick="renderDay('quarta')" class="day-btn px-3 py-1 rounded-full text-gray-500" data-day="quarta">Qua</button>
+    <button onclick="renderDay('quinta')" class="day-btn px-3 py-1 rounded-full text-gray-500" data-day="quinta">Qui</button>
+    <button onclick="renderDay('sexta')" class="day-btn px-3 py-1 rounded-full text-gray-500" data-day="sexta">Sex</button>
+  </nav>
+
+  <!-- Resumo de Totais do Dia -->
+  <div class="max-w-md mx-auto p-4">
+    <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 mb-4 flex justify-between items-center">
+      <div>
+        <span class="text-xs text-gray-400 font-semibold uppercase tracking-wider">Total do Dia</span>
+        <h2 id="day-total-value" class="text-2xl font-black text-gray-900">£0.00</h2>
+      </div>
+      <div class="text-right">
+        <span class="text-xs text-gray-400 font-semibold uppercase tracking-wider">Serviços</span>
+        <h3 id="day-total-jobs" class="text-lg font-bold text-gray-700">0</h3>
+      </div>
+    </div>
+
+    <!-- Lista Dinâmica de Trabalhos -->
+    <div id="jobs-container" class="space-y-3"></div>
+  </div>
+
+  <script>
+    const appData = {"weeks":{"semana1":{"segunda":[{"id":"ymdwvm3","name":"Bernadette","hours":10,"value":200,"pay":"transfer","horario":"08:00","horarioFim":"10:30","rate":20,"people":4},{"id":"mk68t9u","name":"Bushra","hours":4,"value":84,"pay":"transfer","horario":"10:45","horarioFim":"11:45","rate":21,"people":4},{"id":"nrp39bq","name":"Katrina","hours":5,"value":105,"pay":"transfer","horario":"12:00","horarioFim":"13:15","rate":21,"people":4},{"id":"7om2tov","name":"Jessica","hours":3,"value":63,"pay":"transfer","horario":"13:35","horarioFim":"14:20","rate":21,"people":4},{"id":"4293cb1","name":"Rachel Nova","hours":3.5,"value":73.5,"pay":"cash","horario":"14:40","horarioFim":"15:33","rate":21,"people":4},{"id":"cn0q38p","name":"Tom","hours":3,"value":63,"pay":"cash","horario":"15:40","horarioFim":"16:25","rate":21,"people":4},{"id":"2bj0hiz","name":"Rachel Fazendinha ","hours":3,"value":63,"pay":"cash","horario":"16:40","horarioFim":"17:25","rate":21,"people":4}],"terca":[{"id":"451pa4c","name":"Rhiannon","hours":4,"value":84,"pay":"cash","horario":"08:00","horarioFim":"08:48","rate":21,"people":5},{"id":"dqpmtce","name":"Sasha","hours":3,"value":63,"pay":"cash","horario":"09:00","horarioFim":"09:36","rate":21,"people":5},{"id":"6jwmysh","name":"Phoebe","hours":3,"value":63,"pay":"cash","horario":"09:40","horarioFim":"10:16","rate":21,"people":5},{"id":"ebgic8p","name":"Vanya","hours":5,"value":100,"pay":"transfer","horario":"10:20","horarioFim":"11:20","rate":20,"people":5},{"id":"lr21c5o","name":"Brent","hours":4,"value":84,"pay":"transfer","horario":"11:35","horarioFim":"12:23","rate":21,"people":5},{"id":"lds4ch7","name":"Rod","hours":3,"value":63,"pay":"transfer","horario":"12:25","horarioFim":"13:01","rate":21,"people":5},{"id":"bag0ua5","name":"Anne Marie","hours":2,"value":42,"pay":"cash","horario":"13:40","horarioFim":"14:04","rate":21,"people":5},{"id":"nl4e3ey","name":"Caroline","hours":2,"value":42,"pay":"cash","horario":"14:30","horarioFim":"15:00","rate":21,"people":4},{"id":"hp053v8","name":"Carol","hours":3,"value":63,"pay":"transfer","horario":"15:10","horarioFim":"15:46","rate":21,"people":5},{"id":"dmzpowp","name":"Rachel Porquinho ","horario":"16:15","horarioFim":"17:03","hours":4,"value":84,"rate":21,"people":5,"pay":"cash"},{"id":"jqsf3f0","name":"Helen","horario":"17:35","horarioFim":"18:23","hours":4,"value":0,"rate":0,"people":5,"pay":"cash"}],"quarta":[{"id":"afpeuk0","name":"Jo","hours":6,"value":120,"pay":"cash","horario":"08:00","horarioFim":"09:12","rate":20,"people":5},{"id":"6qzcyuz","name":"Katie Claverton","hours":8,"value":160,"pay":"transfer","horario":"09:30","horarioFim":"11:06","rate":20,"people":5},{"id":"1u68sgb","name":"Angie","hours":5,"value":105,"pay":"transfer","horario":"11:20","horarioFim":"12:20","rate":21,"people":5},{"id":"ud27igd","name":"Sarah","hours":4,"value":84,"pay":"transfer","horario":"12:50","horarioFim":"13:38","rate":21,"people":5},{"id":"co5y74z","name":"Gemma","hours":3,"value":63,"pay":"transfer","horario":"13:45","horarioFim":"14:21","rate":21,"people":5},{"id":"a40iej3","name":"Jaime","hours":2,"value":42,"pay":"cash","horario":"14:35","horarioFim":"14:59","rate":21,"people":5},{"id":"sfhm4ve","name":"Sean","horario":"15:15","horarioFim":"15:51","hours":3,"value":63,"rate":21,"people":5,"pay":"cash"},{"id":"n1v9v83","name":"Morwenna ","horario":"16:20","horarioFim":"17:32","hours":6,"value":125,"rate":20.83,"people":5,"pay":"cash"}],"quinta":[{"id":"y26y9r2","name":"Emma","hours":4,"value":80,"pay":"transfer","horario":"07:50","horarioFim":"08:38","rate":20,"people":5},{"id":"yw30brp","name":"Ian","hours":3,"value":60,"pay":"cash","horario":"09:20","horarioFim":"09:56","rate":20,"people":5},{"id":"ctamczr","name":"Anne","hours":4,"value":88,"pay":"transfer","horario":"10:00","horarioFim":"10:48","rate":22,"people":5},{"id":"rx9g3xh","name":"Lynne","hours":4,"value":84,"pay":"cash","horario":"10:55","horarioFim":"11:43","rate":21,"people":5},{"id":"3aygizv","name":"David","hours":6,"value":120,"pay":"transfer","horario":"12:15","horarioFim":"13:27","rate":20,"people":5},{"id":"r2k5dqc","name":"James","hours":4,"value":84,"pay":"cash","horario":"14:00","horarioFim":"14:48","rate":21,"people":5},{"id":"y3s934o","name":"Arabee","hours":4,"value":84,"pay":"transfer","horario":"15:00","horarioFim":"15:48","rate":21,"people":5},{"id":"0v8kjxc","name":"Jane","hours":6,"value":120,"pay":"cash","horario":"16:15","horarioFim":"17:27","rate":20,"people":5}],"sexta":[{"id":"2llihu0","name":"Bernadette","hours":9,"value":180,"pay":"transfer","horario":"08:00","horarioFim":"10:15","rate":20,"people":4},{"id":"oti6b0m","name":"Pippa","hours":6,"value":132,"pay":"transfer","horario":"10:40","horarioFim":"12:10","rate":22,"people":4},{"id":"y4t058s","name":"Chris","hours":3,"value":63,"pay":"transfer","horario":"12:50","horarioFim":"13:35","rate":21,"people":4},{"id":"4hch2t7","name":"Rob","hours":3,"value":63,"pay":"cash","horario":"13:50","horarioFim":"14:35","rate":21,"people":4},{"id":"3bms3gc","name":"Tim","hours":2,"value":42,"pay":"transfer","horario":"14:40","horarioFim":"15:40","rate":21,"people":2}]},"semana2":{"segunda":[{"id":"5mu2ue6","name":"Bernadette","hours":10,"value":200,"pay":"transfer","horario":"08:00","horarioFim":"10:30","rate":20,"people":1},{"id":"6gs48go","name":"Bushra","hours":4,"value":84,"pay":"transfer","horario":"10:45","horarioFim":"11:45","rate":21,"people":1}],"terca":[],"quarta":[],"quinta":[],"sexta":[]}}};
+
+    let currentWeek = 'semana1';
+    let currentDay = 'segunda';
+
+    function switchWeek(week) {
+      currentWeek = week;
+      document.getElementById('btn-sem1').className = week === 'semana1' ? 'px-3 py-1 rounded-md font-semibold bg-white text-brand-700 shadow' : 'px-3 py-1 rounded-md font-semibold text-white';
+      document.getElementById('btn-sem2').className = week === 'semana2' ? 'px-3 py-1 rounded-md font-semibold bg-white text-brand-700 shadow' : 'px-3 py-1 rounded-md font-semibold text-white';
+      renderDay(currentDay);
+    }
+
+    function renderDay(day) {
+      currentDay = day;
+      document.querySelectorAll('.day-btn').forEach(btn => {
+        btn.className = btn.dataset.day === day ? 'day-btn px-3 py-1 rounded-full bg-brand-50 text-brand-600 font-bold' : 'day-btn px-3 py-1 rounded-full text-gray-500';
+      });
+
+      const jobs = appData.weeks[currentWeek]?.[day] || [];
+      const container = document.getElementById('jobs-container');
+      container.innerHTML = '';
+      let dayTotal = 0;
+
+      if(jobs.length === 0) {
+        container.innerHTML = '<div class="text-center text-gray-400 py-8">Nenhum agendamento para este dia.</div>';
+      }
+
+      jobs.forEach(job => {
+        const val = Number(job.value) || 0;
+        dayTotal += val;
+        const isCash = job.pay === 'cash';
+        container.innerHTML += `
+          <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-full ${isCash ? 'bg-emerald-100 text-emerald-700' : 'bg-sky-100 text-sky-700'} flex items-center justify-center font-bold text-sm">
+                ${isCash ? '£' : 'T'}
+              </div>
+              <div>
+                <h4 class="font-bold text-gray-900">${job.name}</h4>
+                <p class="text-xs text-gray-500 font-medium">${job.horario || '--:--'} - ${job.horarioFim || '--:--'} • ${job.people} pess.</p>
+              </div>
+            </div>
+            <div class="text-right">
+              <span class="block font-black text-gray-900 text-lg">£${val.toFixed(2)}</span>
+              <span class="text-xs text-gray-400 font-medium">${job.hours}h (£${job.rate}/h)</span>
+            </div>
+          </div>`;
+      });
+
+      document.getElementById('day-total-value').innerText = `£${dayTotal.toFixed(2)}`;
+      document.getElementById('day-total-jobs').innerText = jobs.length;
+    }
+
+    renderDay('segunda');
+  </script>
+</body>
+</html>
