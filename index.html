@@ -31,7 +31,7 @@
     .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
     .card-title { font-weight: bold; color: var(--accent); }
     .badge { padding: 4px 8px; border-radius: 6px; font-size: 0.8rem; font-weight: bold; }
-    .badge-cash { background: rgba(34, 197, 94, 0.2); color: var(--success); }
+    .badge-cash { background: rgba(245, 158, 11, 0.2); color: var(--warning); }
     .badge-transfer { background: rgba(56, 189, 248, 0.2); color: var(--accent); }
     .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     .stat-box { background: #0f172a; padding: 12px; border-radius: 8px; text-align: center; }
@@ -64,10 +64,10 @@
       <div id="job-form" class="card hidden">
         <h3 id="form-title" style="margin-bottom:10px;">Adicionar Agendamento</h3>
         <input type="hidden" id="job-id">
-        <label>Cliente / Endereço</label>
-        <input type="text" id="job-client" placeholder="Ex: Mr. Smith - 12 High St">
+        <label>Cliente / Nome</label>
+        <input type="text" id="job-client" placeholder="Ex: Bernadette">
         
-        <label>Dia da Semana</label>
+        <label>Dia da Semana / Período</label>
         <select id="job-day">
           <option>Segunda-feira (Semana A)</option>
           <option>Terça-feira (Semana A)</option>
@@ -79,6 +79,7 @@
           <option>Quarta-feira (Semana B)</option>
           <option>Quinta-feira (Semana B)</option>
           <option>Sexta-feira (Semana B)</option>
+          <option>Outros / Mensal</option>
         </select>
 
         <div class="grid-2">
@@ -89,8 +90,8 @@
           <div>
             <label>Pagamento</label>
             <select id="job-payment">
-              <option value="Cash">Cash</option>
-              <option value="Transfer">Transfer</option>
+              <option value="transfer">Transfer</option>
+              <option value="cash">Cash</option>
             </select>
           </div>
         </div>
@@ -101,12 +102,8 @@
             <input type="number" step="0.5" id="job-duration" placeholder="3">
           </div>
           <div>
-            <label>Funcionário</label>
-            <select id="job-worker">
-              <option value="Roberta">Roberta</option>
-              <option value="Lorruama">Lorruama</option>
-              <option value="Victor Hugo">Victor Hugo</option>
-            </select>
+            <label>Horário Entrada</label>
+            <input type="text" id="job-horario" placeholder="08:00">
           </div>
         </div>
 
@@ -115,14 +112,14 @@
       </div>
 
       <div id="jobs-list">
-        <p style="text-align:center; color:var(--subtext); margin-top:20px;">Carregando agendamentos...</p>
+        <p style="text-align:center; color:var(--subtext); margin-top:20px;">Carregando e importando agendamentos...</p>
       </div>
     </div>
 
     <!-- ABA FINANCEIRO -->
     <div id="tab-financeiro" class="hidden">
       <div class="card">
-        <div class="card-title" style="margin-bottom:15px;">Resumo Quinzenal</div>
+        <div class="card-title" style="margin-bottom:15px;">Resumo Financeiro Total</div>
         <div class="grid-2">
           <div class="stat-box">
             <div style="color:var(--subtext); font-size:0.8rem;">Total Faturado</div>
@@ -143,9 +140,9 @@
     <!-- ABA EQUIPE -->
     <div id="tab-equipe" class="hidden">
       <div class="card">
-        <div class="card-title" style="margin-bottom:15px;">Horas e Pagamentos por Funcionário</div>
+        <div class="card-title" style="margin-bottom:15px;">Horas e Pagamentos por Funcionário (Semana 1)</div>
         <div id="team-stats">
-          <p style="text-align:center; color:var(--subtext);">Carregando dados da equipe...</p>
+          <p style="text-align:center; color:var(--subtext);">Calculando horas da equipe...</p>
         </div>
       </div>
     </div>
@@ -153,7 +150,7 @@
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getFirestore, collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyCgqJMnBcwCI4eEEOS3wxa3uFrmcXMN9dA",
@@ -167,6 +164,51 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     let jobsData = [];
+
+    const initialData = {"weeks":{"semana1":{"segunda":[{"id":"ymdwvm3","name":"Bernadette","hours":10,"value":200,"pay":"transfer","horario":"08:00"},{"id":"mk68t9u","name":"Bushra","hours":4,"value":84,"pay":"transfer","horario":"10:45"},{"id":"nrp39bq","name":"Katrina","hours":5,"value":105,"pay":"transfer","horario":"12:00"},{"id":"7om2tov","name":"Jessica","hours":3,"value":63,"pay":"transfer","horario":"13:35"},{"id":"4293cb1","name":"Rachel Nova","hours":3.5,"value":73.5,"pay":"cash","horario":"14:40"},{"id":"cn0q38p","name":"Tom","hours":3,"value":63,"pay":"cash","horario":"15:40"},{"id":"2bj0hiz","name":"Rachel Fazendinha ","hours":3,"value":63,"pay":"cash","horario":"16:40"}],"terca":[{"id":"451pa4c","name":"Rhiannon","hours":4,"value":84,"pay":"cash","horario":"08:00"},{"id":"dqpmtce","name":"Sasha","hours":3,"value":63,"pay":"cash","horario":"09:00"},{"id":"6jwmysh","name":"Phoebe","hours":3,"value":63,"pay":"cash","horario":"09:40"},{"id":"ebgic8p","name":"Vanya","hours":5,"value":100,"pay":"transfer","horario":"10:20"},{"id":"lr21c5o","name":"Brent","hours":4,"value":84,"pay":"transfer","horario":"11:35"},{"id":"lds4ch7","name":"Rod","hours":3,"value":63,"pay":"transfer","horario":"12:25"},{"id":"bag0ua5","name":"Anne Marie","hours":2,"value":42,"pay":"cash","horario":"13:40"},{"id":"nl4e3ey","name":"Caroline","hours":2,"value":42,"pay":"cash","horario":"14:30"},{"id":"hp053v8","name":"Carol","hours":3,"value":63,"pay":"transfer","horario":"15:10"},{"id":"dmzpowp","name":"Rachel Porquinho ","horario":"16:15","hours":4,"value":84,"pay":"cash"},{"id":"jqsf3f0","name":"Helen","horario":"17:35","hours":4,"value":0,"pay":"cash"}],"quarta":[{"id":"afpeuk0","name":"Jo","hours":6,"value":120,"pay":"cash","horario":"08:00"},{"id":"6qzcyuz","name":"Katie Claverton","hours":8,"value":160,"pay":"transfer","horario":"09:30"},{"id":"1u68sgb","name":"Angie","hours":5,"value":105,"pay":"transfer","horario":"11:20"},{"id":"ud27igd","name":"Sarah","hours":4,"value":84,"pay":"transfer","horario":"12:50"},{"id":"co5y74z","name":"Gemma","hours":3,"value":63,"pay":"transfer","horario":"13:45"},{"id":"a40iej3","name":"Jaime","hours":2,"value":42,"pay":"cash","horario":"14:35"},{"id":"sfhm4ve","name":"Sean","horario":"15:15","hours":3,"value":63,"pay":"cash"},{"id":"n1v9v83","name":"Morwenna ","horario":"16:20","hours":6,"value":125,"pay":"cash"}],"quinta":[{"id":"y26y9r2","name":"Emma","hours":4,"value":80,"pay":"transfer","horario":"07:50"},{"id":"yw30brp","name":"Ian","hours":3,"value":60,"pay":"cash","horario":"09:20"},{"id":"ctamczr","name":"Anne","hours":4,"value":88,"pay":"transfer","horario":"10:00"},{"id":"rx9g3xh","name":"Lynne","hours":4,"value":84,"pay":"cash","horario":"10:55"},{"id":"3aygizv","name":"David","hours":6,"value":120,"pay":"transfer","horario":"12:15"},{"id":"r2k5dqc","name":"James","hours":4,"value":84,"pay":"cash","horario":"14:00"},{"id":"y3s934o","name":"Arabee","hours":4,"value":84,"pay":"transfer","horario":"15:00"},{"id":"0v8kjxc","name":"Jane","hours":6,"value":120,"pay":"cash","horario":"16:15"}],"sexta":[{"id":"2llihu0","name":"Bernadette","hours":9,"value":180,"pay":"transfer","horario":"08:00"},{"id":"oti6b0m","name":"Pippa","hours":6,"value":132,"pay":"transfer","horario":"10:40"},{"id":"y4t058s","name":"Chris","hours":3,"value":63,"pay":"transfer","horario":"12:50"},{"id":"4hch2t7","name":"Rob","hours":3,"value":63,"pay":"cash","horario":"13:50"},{"id":"3bms3gc","name":"Tim","hours":2,"value":42,"pay":"transfer","horario":"14:40"}]},"semana2":{"segunda":[{"id":"5mu2ue6","name":"Bernadette","hours":10,"value":200,"pay":"transfer"},{"id":"6gs48go","name":"Bushra","hours":4,"value":84,"pay":"transfer"},{"id":"sav4p8k","name":"Jessica","hours":3,"value":63,"pay":"transfer"},{"id":"6w99dxb","name":"Katrina","hours":5,"value":105,"pay":"transfer"},{"id":"f85cwh6","name":"Rachel Nova","hours":3.5,"value":73.5,"pay":"cash"},{"id":"qnah6mn","name":"Rachel Fazendinha","hours":3,"value":63,"pay":"cash"},{"id":"jlmgzmm","name":"Jacqueline","hours":6,"value":120,"pay":"cash"}],"terca":[{"id":"4fxflc5","name":"Rhiannon","hours":4,"value":84,"pay":"cash"},{"id":"raevdha","name":"Sasha","hours":3,"value":63,"pay":"cash"},{"id":"jpl88mq","name":"Phoebe","hours":3,"value":63,"pay":"cash"},{"id":"kdcngah","name":"Rod","hours":3,"value":63,"pay":"transfer"},{"id":"2xwt390","name":"Caroline","hours":2,"value":42,"pay":"cash"},{"id":"wf9c3m2","name":"Carol","hours":3,"value":63,"pay":"transfer"},{"id":"fuho02b","name":"Brent","hours":4,"value":84,"pay":"transfer"},{"id":"2xlpz0d","name":"Vanya","hours":5,"value":100,"pay":"transfer"}],"quarta":[{"id":"4o6hk99","name":"Jo","hours":6,"value":120,"pay":"cash"},{"id":"7soty44","name":"Katie Claverton","hours":8,"value":160,"pay":"transfer"},{"id":"qqcp6wc","name":"Angie","hours":5,"value":105,"pay":"transfer"},{"id":"qqryv20","name":"Sarah","hours":4,"value":84,"pay":"transfer"},{"id":"izq1oqr","name":"Rachel Porquinho","hours":4,"value":84,"pay":"cash"},{"id":"ziztgbp","name":"Lucia","hours":4,"value":84,"pay":"transfer"},{"id":"3kcb0os","name":"Sean","hours":3,"value":63,"pay":"cash"}],"quinta":[{"id":"jq43s2b","name":"Emma","hours":4,"value":80,"pay":"transfer"},{"id":"haxa38u","name":"Ian","hours":3,"value":60,"pay":"cash"},{"id":"29g9kf3","name":"Anne","hours":4,"value":88,"pay":"transfer"},{"id":"qwghstb","name":"Arabee","hours":4,"value":84,"pay":"transfer"},{"id":"5uszchp","name":"Laura","hours":6,"value":120,"pay":"transfer"},{"id":"1cwq8al","name":"Jane","hours":6,"value":120,"pay":"cash"},{"id":"wlluhbl","name":"Susie","hours":3,"value":63,"pay":"cash"},{"id":"1vyd9nb","name":"Julia","hours":6,"value":120,"pay":"transfer"}],"sexta":[{"id":"3udhkef","name":"Bernadette","hours":9,"value":180,"pay":"transfer"},{"id":"861nkju","name":"Pippa","hours":6,"value":132,"pay":"transfer"},{"id":"m5zc9qc","name":"Chris","hours":4,"value":84,"pay":"transfer"},{"id":"47tcbuu","name":"James","hours":4,"value":84,"pay":"cash"},{"id":"kkftp0o","name":"Tim","hours":2,"value":42,"pay":"transfer"},{"id":"hvoqsrm","name":"Rob","hours":3,"value":63,"pay":"cash"}]}},"outros":[{"id":"2rf5sxt","name":"Morwenna","hours":6,"value":125,"pay":"cash"},{"id":"3siw0dv","name":"Valerie","hours":4,"value":80,"pay":"cash"},{"id":"5177ntt","name":"Helen","hours":4,"value":88,"pay":"cash"}]};
+
+    async function seedDatabaseIfEmpty() {
+      const snap = await getDocs(collection(db, "jobs"));
+      if (snap.empty) {
+        const dayMap = {
+          "segunda": "Segunda-feira",
+          "terca": "Terça-feira",
+          "quarta": "Quarta-feira",
+          "quinta": "Quinta-feira",
+          "sexta": "Sexta-feira"
+        };
+
+        for (const sem of ["semana1", "semana2"]) {
+          const semLabel = sem === "semana1" ? "Semana A" : "Semana B";
+          const days = initialData.weeks[sem];
+          for (const dayKey in days) {
+            for (const item of days[dayKey]) {
+              await addDoc(collection(db, "jobs"), {
+                client: item.name,
+                day: `${dayMap[dayKey]} (${semLabel})`,
+                price: parseFloat(item.value) || 0,
+                payment: item.pay || "cash",
+                duration: parseFloat(item.hours) || 0,
+                horario: item.horario || ""
+              });
+            }
+          }
+        }
+
+        for (const item of initialData.outros) {
+          await addDoc(collection(db, "jobs"), {
+            client: item.name,
+            day: "Outros / Mensal",
+            price: parseFloat(item.value) || 0,
+            payment: item.pay || "cash",
+            duration: parseFloat(item.hours) || 0,
+            horario: ""
+          });
+        }
+      }
+    }
+
+    seedDatabaseIfEmpty();
 
     window.switchTab = function(tab) {
       document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
@@ -184,6 +226,7 @@
         document.getElementById('job-client').value = '';
         document.getElementById('job-price').value = '';
         document.getElementById('job-duration').value = '';
+        document.getElementById('job-horario').value = '';
       }
     };
 
@@ -195,10 +238,10 @@
         price: parseFloat(document.getElementById('job-price').value) || 0,
         payment: document.getElementById('job-payment').value,
         duration: parseFloat(document.getElementById('job-duration').value) || 0,
-        worker: document.getElementById('job-worker').value
+        horario: document.getElementById('job-horario').value
       };
 
-      if(!job.client) return alert('Por favor, informe o cliente.');
+      if(!job.client) return alert('Por favor, informe o nome do cliente.');
 
       if(id) {
         await updateDoc(doc(db, "jobs", id), job);
@@ -223,7 +266,7 @@
       document.getElementById('job-price').value = job.price;
       document.getElementById('job-payment').value = job.payment;
       document.getElementById('job-duration').value = job.duration;
-      document.getElementById('job-worker').value = job.worker;
+      document.getElementById('job-horario').value = job.horario || '';
       document.getElementById('job-form').classList.remove('hidden');
     };
 
@@ -240,17 +283,17 @@
     function renderJobs() {
       const list = document.getElementById('jobs-list');
       if(jobsData.length === 0) {
-        list.innerHTML = '<p style="text-align:center; color:var(--subtext); margin-top:20px;">Nenhum agendamento cadastrado.</p>';
+        list.innerHTML = '<p style="text-align:center; color:var(--subtext); margin-top:20px;">Importando dados...</p>';
         return;
       }
       list.innerHTML = jobsData.map(j => `
         <div class="card">
           <div class="card-header">
             <span class="card-title">${j.client}</span>
-            <span class="badge ${j.payment === 'Cash' ? 'badge-cash' : 'badge-transfer'}">${j.payment}</span>
+            <span class="badge ${j.payment.toLowerCase() === 'cash' ? 'badge-cash' : 'badge-transfer'}">${j.payment.toUpperCase()}</span>
           </div>
-          <div style="font-size:0.9rem; color:var(--subtext); margin-bottom:5px;">📅 ${j.day}</div>
-          <div style="font-size:0.9rem; color:var(--subtext); margin-bottom:10px;">👤 ${j.worker} | ⏱️ ${j.duration}h | £${j.price}</div>
+          <div style="font-size:0.9rem; color:var(--subtext); margin-bottom:5px;">📅 ${j.day} ${j.horario ? '| 🕒 ' + j.horario : ''}</div>
+          <div style="font-size:0.9rem; color:var(--subtext); margin-bottom:10px;">⏱️ ${j.duration}h | £${j.price}</div>
           <button class="btn" style="background:#334155; color:white; padding:6px;" onclick="editJob('${j.id}')">Editar</button>
           <button class="btn btn-danger" style="padding:6px;" onclick="deleteJob('${j.id}')">Excluir</button>
         </div>
@@ -261,7 +304,7 @@
       let total = 0, cash = 0, transfer = 0;
       jobsData.forEach(j => {
         total += j.price;
-        if(j.payment === 'Cash') cash += j.price;
+        if(j.payment.toLowerCase() === 'cash') cash += j.price;
         else transfer += j.price;
       });
       document.getElementById('total-revenue').innerText = `£${total.toFixed(2)}`;
@@ -270,23 +313,19 @@
     }
 
     function renderTeam() {
-      const rates = { "Roberta": 12, "Lorruama": 12, "Victor Hugo": 12 };
-      const team = { "Roberta": 0, "Lorruama": 0, "Victor Hugo": 0 };
-      
-      jobsData.forEach(j => {
-        if(team[j.worker] !== undefined) {
-          team[j.worker] += j.duration;
-        }
-      });
+      const teamData = [
+        { name: "Roberta", rate: 15.00, hours: 33.93 },
+        { name: "Lorruama", rate: 12.21, hours: 33.93 },
+        { name: "Victor Hugo", rate: 12.21, hours: 21.80 }
+      ];
 
       const teamContainer = document.getElementById('team-stats');
-      teamContainer.innerHTML = Object.keys(team).map(worker => {
-        const hours = team[worker];
-        const pay = hours * rates[worker];
+      teamContainer.innerHTML = teamData.map(member => {
+        const pay = member.hours * member.rate;
         return `
           <div style="padding:10px 0; border-bottom:1px solid #334155;">
-            <div style="font-weight:bold; color:var(--accent);">${worker}</div>
-            <div style="font-size:0.9rem; color:var(--subtext);">Horas trabalhadas: <strong>${hours}h</strong></div>
+            <div style="font-weight:bold; color:var(--accent);">${member.name} (£${member.rate.toFixed(2)}/h)</div>
+            <div style="font-size:0.9rem; color:var(--subtext);">Horas da semana: <strong>${member.hours.toFixed(2)}h</strong></div>
             <div style="font-size:0.9rem; color:var(--success);">Pagamento total: <strong>£${pay.toFixed(2)}</strong></div>
           </div>
         `;
