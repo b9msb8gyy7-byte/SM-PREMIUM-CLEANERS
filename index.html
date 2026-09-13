@@ -23,23 +23,36 @@
     body { background-color: var(--bg); color: var(--text); padding-bottom: 80px; }
     header { background: var(--card); padding: 15px 20px; text-align: center; border-bottom: 1px solid #334155; position: sticky; top: 0; z-index: 10; }
     header h1 { font-size: 1.2rem; color: var(--accent); }
-    .nav-tabs { display: flex; background: var(--card); border-bottom: 1px solid #334155; position: sticky; top: 51px; z-index: 10; }
-    .tab-btn { flex: 1; padding: 12px; text-align: center; background: none; border: none; color: var(--subtext); font-weight: bold; cursor: pointer; border-bottom: 2px solid transparent; }
+    
+    .nav-tabs { display: flex; background: var(--card); border-bottom: 1px solid #334155; position: sticky; top: 51px; z-index: 10; overflow-x: auto; }
+    .tab-btn { flex: 1; padding: 12px 10px; text-align: center; background: none; border: none; color: var(--subtext); font-weight: bold; cursor: pointer; border-bottom: 2px solid transparent; white-space: nowrap; font-size: 0.85rem; }
     .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+    
+    .week-selector { display: flex; gap: 10px; margin-bottom: 15px; }
+    .week-btn { flex: 1; padding: 8px; background: #0f172a; border: 1px solid #334155; color: var(--subtext); border-radius: 6px; font-weight: bold; cursor: pointer; }
+    .week-btn.active { background: var(--accent); color: #0f172a; border-color: var(--accent); }
+
     .container { padding: 15px; }
     .card { background: var(--card); border-radius: 12px; padding: 15px; margin-bottom: 15px; border: 1px solid #334155; }
-    .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-    .card-title { font-weight: bold; color: var(--accent); }
-    .badge { padding: 4px 8px; border-radius: 6px; font-size: 0.8rem; font-weight: bold; }
+    .day-header { font-size: 1rem; font-weight: bold; color: var(--accent); margin: 15px 0 10px 0; border-bottom: 1px solid #334155; padding-bottom: 5px; }
+    
+    .job-item { background: #0f172a; border-radius: 8px; padding: 10px; margin-bottom: 8px; border: 1px solid #334155; display: flex; justify-content: space-between; align-items: center; }
+    .job-info { flex: 1; }
+    .job-title { font-weight: bold; color: var(--text); font-size: 0.95rem; }
+    .job-sub { font-size: 0.8rem; color: var(--subtext); margin-top: 2px; }
+    
+    .badge { padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: bold; }
     .badge-cash { background: rgba(245, 158, 11, 0.2); color: var(--warning); }
     .badge-transfer { background: rgba(56, 189, 248, 0.2); color: var(--accent); }
+
     .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     .stat-box { background: #0f172a; padding: 12px; border-radius: 8px; text-align: center; }
-    .stat-val { font-size: 1.2rem; font-weight: bold; margin-top: 5px; }
-    .btn { width: 100%; padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+    .stat-val { font-size: 1.1rem; font-weight: bold; margin-top: 5px; }
+    
+    .btn { width: 100%; padding: 10px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; }
     .btn-primary { background: var(--accent); color: #0f172a; }
     .btn-danger { background: var(--danger); color: white; margin-top: 5px; }
-    input, select { width: 100%; padding: 10px; margin-top: 5px; margin-bottom: 10px; border-radius: 6px; border: 1px solid #334155; background: #0f172a; color: white; }
+    input, select, textarea { width: 100%; padding: 10px; margin-top: 5px; margin-bottom: 10px; border-radius: 6px; border: 1px solid #334155; background: #0f172a; color: white; }
     label { font-size: 0.85rem; color: var(--subtext); }
     .hidden { display: none; }
   </style>
@@ -54,38 +67,46 @@
     <button class="tab-btn active" onclick="switchTab('agenda')">Agenda</button>
     <button class="tab-btn" onclick="switchTab('financeiro')">Financeiro</button>
     <button class="tab-btn" onclick="switchTab('equipe')">Equipe</button>
+    <button class="tab-btn" onclick="switchTab('visitas')">Visitas</button>
   </div>
 
   <div class="container">
     <!-- ABA AGENDA -->
     <div id="tab-agenda">
-      <button class="btn btn-primary" style="margin-bottom: 15px;" onclick="toggleForm()">+ Nova Faxina</button>
+      <div class="week-selector">
+        <button class="week-btn active" id="btn-sem1" onclick="setWeek('semana1')">Semana 1</button>
+        <button class="week-btn" id="btn-sem2" onclick="setWeek('semana2')">Semana 2</button>
+        <button class="week-btn" id="btn-outros" onclick="setWeek('outros')">Outros/Mensal</button>
+      </div>
+
+      <button class="btn btn-primary" style="margin-bottom: 15px;" onclick="toggleForm()">+ Novo Agendamento</button>
       
       <div id="job-form" class="card hidden">
-        <h3 id="form-title" style="margin-bottom:10px;">Adicionar Agendamento</h3>
+        <h3 style="margin-bottom:10px;">Agendamento</h3>
         <input type="hidden" id="job-id">
-        <label>Cliente / Nome</label>
-        <input type="text" id="job-client" placeholder="Ex: Bernadette">
+        <label>Cliente</label>
+        <input type="text" id="job-client">
         
-        <label>Dia da Semana / Período</label>
+        <label>Semana</label>
+        <select id="job-week">
+          <option value="semana1">Semana 1</option>
+          <option value="semana2">Semana 2</option>
+          <option value="outros">Outros / Mensal</option>
+        </select>
+
+        <label>Dia da Semana</label>
         <select id="job-day">
-          <option>Segunda-feira (Semana A)</option>
-          <option>Terça-feira (Semana A)</option>
-          <option>Quarta-feira (Semana A)</option>
-          <option>Quinta-feira (Semana A)</option>
-          <option>Sexta-feira (Semana A)</option>
-          <option>Segunda-feira (Semana B)</option>
-          <option>Terça-feira (Semana B)</option>
-          <option>Quarta-feira (Semana B)</option>
-          <option>Quinta-feira (Semana B)</option>
-          <option>Sexta-feira (Semana B)</option>
-          <option>Outros / Mensal</option>
+          <option value="segunda">Segunda-feira</option>
+          <option value="terca">Terça-feira</option>
+          <option value="quarta">Quarta-feira</option>
+          <option value="quinta">Quinta-feira</option>
+          <option value="sexta">Sexta-feira</option>
         </select>
 
         <div class="grid-2">
           <div>
-            <label>Valor Total (£)</label>
-            <input type="number" id="job-price" placeholder="60">
+            <label>Valor (£)</label>
+            <input type="number" id="job-price">
           </div>
           <div>
             <label>Pagamento</label>
@@ -98,8 +119,8 @@
 
         <div class="grid-2">
           <div>
-            <label>Duração (Horas)</label>
-            <input type="number" step="0.5" id="job-duration" placeholder="3">
+            <label>Horas</label>
+            <input type="number" step="0.5" id="job-duration">
           </div>
           <div>
             <label>Horário Entrada</label>
@@ -107,19 +128,17 @@
           </div>
         </div>
 
-        <button class="btn btn-primary" onclick="saveJob()">Salvar Agendamento</button>
+        <button class="btn btn-primary" onclick="saveJob()">Salvar</button>
         <button class="btn" style="background:#334155; color:white;" onclick="toggleForm()">Cancelar</button>
       </div>
 
-      <div id="jobs-list">
-        <p style="text-align:center; color:var(--subtext); margin-top:20px;">Carregando e importando agendamentos...</p>
-      </div>
+      <div id="jobs-container"></div>
     </div>
 
     <!-- ABA FINANCEIRO -->
     <div id="tab-financeiro" class="hidden">
       <div class="card">
-        <div class="card-title" style="margin-bottom:15px;">Resumo Financeiro Total</div>
+        <div class="card-title" style="margin-bottom:15px;">Resumo Financeiro (Semana Selecionada)</div>
         <div class="grid-2">
           <div class="stat-box">
             <div style="color:var(--subtext); font-size:0.8rem;">Total Faturado</div>
@@ -140,11 +159,27 @@
     <!-- ABA EQUIPE -->
     <div id="tab-equipe" class="hidden">
       <div class="card">
-        <div class="card-title" style="margin-bottom:15px;">Horas e Pagamentos por Funcionário (Semana 1)</div>
-        <div id="team-stats">
-          <p style="text-align:center; color:var(--subtext);">Calculando horas da equipe...</p>
-        </div>
+        <div class="card-title" style="margin-bottom:15px;">Horas e Pagamentos da Equipe</div>
+        <div id="team-stats"></div>
       </div>
+    </div>
+
+    <!-- ABA VISITAS -->
+    <div id="tab-visitas" class="hidden">
+      <button class="btn btn-primary" style="margin-bottom: 15px;" onclick="toggleVisitForm()">+ Nova Visita / Orçamento</button>
+      
+      <div id="visit-form" class="card hidden">
+        <h3 style="margin-bottom:10px;">Anotação de Visita</h3>
+        <label>Nome do Cliente</label>
+        <input type="text" id="visit-client">
+        <label>Endereço / Telefone</label>
+        <input type="text" id="visit-contact">
+        <label>Detalhes / Orçamento</label>
+        <textarea id="visit-notes" rows="3"></textarea>
+        <button class="btn btn-primary" onclick="saveVisit()">Salvar Visita</button>
+      </div>
+
+      <div id="visits-list"></div>
     </div>
   </div>
 
@@ -164,28 +199,21 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     let jobsData = [];
+    let currentWeek = 'semana1';
 
     const initialData = {"weeks":{"semana1":{"segunda":[{"id":"ymdwvm3","name":"Bernadette","hours":10,"value":200,"pay":"transfer","horario":"08:00"},{"id":"mk68t9u","name":"Bushra","hours":4,"value":84,"pay":"transfer","horario":"10:45"},{"id":"nrp39bq","name":"Katrina","hours":5,"value":105,"pay":"transfer","horario":"12:00"},{"id":"7om2tov","name":"Jessica","hours":3,"value":63,"pay":"transfer","horario":"13:35"},{"id":"4293cb1","name":"Rachel Nova","hours":3.5,"value":73.5,"pay":"cash","horario":"14:40"},{"id":"cn0q38p","name":"Tom","hours":3,"value":63,"pay":"cash","horario":"15:40"},{"id":"2bj0hiz","name":"Rachel Fazendinha ","hours":3,"value":63,"pay":"cash","horario":"16:40"}],"terca":[{"id":"451pa4c","name":"Rhiannon","hours":4,"value":84,"pay":"cash","horario":"08:00"},{"id":"dqpmtce","name":"Sasha","hours":3,"value":63,"pay":"cash","horario":"09:00"},{"id":"6jwmysh","name":"Phoebe","hours":3,"value":63,"pay":"cash","horario":"09:40"},{"id":"ebgic8p","name":"Vanya","hours":5,"value":100,"pay":"transfer","horario":"10:20"},{"id":"lr21c5o","name":"Brent","hours":4,"value":84,"pay":"transfer","horario":"11:35"},{"id":"lds4ch7","name":"Rod","hours":3,"value":63,"pay":"transfer","horario":"12:25"},{"id":"bag0ua5","name":"Anne Marie","hours":2,"value":42,"pay":"cash","horario":"13:40"},{"id":"nl4e3ey","name":"Caroline","hours":2,"value":42,"pay":"cash","horario":"14:30"},{"id":"hp053v8","name":"Carol","hours":3,"value":63,"pay":"transfer","horario":"15:10"},{"id":"dmzpowp","name":"Rachel Porquinho ","horario":"16:15","hours":4,"value":84,"pay":"cash"},{"id":"jqsf3f0","name":"Helen","horario":"17:35","hours":4,"value":0,"pay":"cash"}],"quarta":[{"id":"afpeuk0","name":"Jo","hours":6,"value":120,"pay":"cash","horario":"08:00"},{"id":"6qzcyuz","name":"Katie Claverton","hours":8,"value":160,"pay":"transfer","horario":"09:30"},{"id":"1u68sgb","name":"Angie","hours":5,"value":105,"pay":"transfer","horario":"11:20"},{"id":"ud27igd","name":"Sarah","hours":4,"value":84,"pay":"transfer","horario":"12:50"},{"id":"co5y74z","name":"Gemma","hours":3,"value":63,"pay":"transfer","horario":"13:45"},{"id":"a40iej3","name":"Jaime","hours":2,"value":42,"pay":"cash","horario":"14:35"},{"id":"sfhm4ve","name":"Sean","horario":"15:15","hours":3,"value":63,"pay":"cash"},{"id":"n1v9v83","name":"Morwenna ","horario":"16:20","hours":6,"value":125,"pay":"cash"}],"quinta":[{"id":"y26y9r2","name":"Emma","hours":4,"value":80,"pay":"transfer","horario":"07:50"},{"id":"yw30brp","name":"Ian","hours":3,"value":60,"pay":"cash","horario":"09:20"},{"id":"ctamczr","name":"Anne","hours":4,"value":88,"pay":"transfer","horario":"10:00"},{"id":"rx9g3xh","name":"Lynne","hours":4,"value":84,"pay":"cash","horario":"10:55"},{"id":"3aygizv","name":"David","hours":6,"value":120,"pay":"transfer","horario":"12:15"},{"id":"r2k5dqc","name":"James","hours":4,"value":84,"pay":"cash","horario":"14:00"},{"id":"y3s934o","name":"Arabee","hours":4,"value":84,"pay":"transfer","horario":"15:00"},{"id":"0v8kjxc","name":"Jane","hours":6,"value":120,"pay":"cash","horario":"16:15"}],"sexta":[{"id":"2llihu0","name":"Bernadette","hours":9,"value":180,"pay":"transfer","horario":"08:00"},{"id":"oti6b0m","name":"Pippa","hours":6,"value":132,"pay":"transfer","horario":"10:40"},{"id":"y4t058s","name":"Chris","hours":3,"value":63,"pay":"transfer","horario":"12:50"},{"id":"4hch2t7","name":"Rob","hours":3,"value":63,"pay":"cash","horario":"13:50"},{"id":"3bms3gc","name":"Tim","hours":2,"value":42,"pay":"transfer","horario":"14:40"}]},"semana2":{"segunda":[{"id":"5mu2ue6","name":"Bernadette","hours":10,"value":200,"pay":"transfer"},{"id":"6gs48go","name":"Bushra","hours":4,"value":84,"pay":"transfer"},{"id":"sav4p8k","name":"Jessica","hours":3,"value":63,"pay":"transfer"},{"id":"6w99dxb","name":"Katrina","hours":5,"value":105,"pay":"transfer"},{"id":"f85cwh6","name":"Rachel Nova","hours":3.5,"value":73.5,"pay":"cash"},{"id":"qnah6mn","name":"Rachel Fazendinha","hours":3,"value":63,"pay":"cash"},{"id":"jlmgzmm","name":"Jacqueline","hours":6,"value":120,"pay":"cash"}],"terca":[{"id":"4fxflc5","name":"Rhiannon","hours":4,"value":84,"pay":"cash"},{"id":"raevdha","name":"Sasha","hours":3,"value":63,"pay":"cash"},{"id":"jpl88mq","name":"Phoebe","hours":3,"value":63,"pay":"cash"},{"id":"kdcngah","name":"Rod","hours":3,"value":63,"pay":"transfer"},{"id":"2xwt390","name":"Caroline","hours":2,"value":42,"pay":"cash"},{"id":"wf9c3m2","name":"Carol","hours":3,"value":63,"pay":"transfer"},{"id":"fuho02b","name":"Brent","hours":4,"value":84,"pay":"transfer"},{"id":"2xlpz0d","name":"Vanya","hours":5,"value":100,"pay":"transfer"}],"quarta":[{"id":"4o6hk99","name":"Jo","hours":6,"value":120,"pay":"cash"},{"id":"7soty44","name":"Katie Claverton","hours":8,"value":160,"pay":"transfer"},{"id":"qqcp6wc","name":"Angie","hours":5,"value":105,"pay":"transfer"},{"id":"qqryv20","name":"Sarah","hours":4,"value":84,"pay":"transfer"},{"id":"izq1oqr","name":"Rachel Porquinho","hours":4,"value":84,"pay":"cash"},{"id":"ziztgbp","name":"Lucia","hours":4,"value":84,"pay":"transfer"},{"id":"3kcb0os","name":"Sean","hours":3,"value":63,"pay":"cash"}],"quinta":[{"id":"jq43s2b","name":"Emma","hours":4,"value":80,"pay":"transfer"},{"id":"haxa38u","name":"Ian","hours":3,"value":60,"pay":"cash"},{"id":"29g9kf3","name":"Anne","hours":4,"value":88,"pay":"transfer"},{"id":"qwghstb","name":"Arabee","hours":4,"value":84,"pay":"transfer"},{"id":"5uszchp","name":"Laura","hours":6,"value":120,"pay":"transfer"},{"id":"1cwq8al","name":"Jane","hours":6,"value":120,"pay":"cash"},{"id":"wlluhbl","name":"Susie","hours":3,"value":63,"pay":"cash"},{"id":"1vyd9nb","name":"Julia","hours":6,"value":120,"pay":"transfer"}],"sexta":[{"id":"3udhkef","name":"Bernadette","hours":9,"value":180,"pay":"transfer"},{"id":"861nkju","name":"Pippa","hours":6,"value":132,"pay":"transfer"},{"id":"m5zc9qc","name":"Chris","hours":4,"value":84,"pay":"transfer"},{"id":"47tcbuu","name":"James","hours":4,"value":84,"pay":"cash"},{"id":"kkftp0o","name":"Tim","hours":2,"value":42,"pay":"transfer"},{"id":"hvoqsrm","name":"Rob","hours":3,"value":63,"pay":"cash"}]}},"outros":[{"id":"2rf5sxt","name":"Morwenna","hours":6,"value":125,"pay":"cash"},{"id":"3siw0dv","name":"Valerie","hours":4,"value":80,"pay":"cash"},{"id":"5177ntt","name":"Helen","hours":4,"value":88,"pay":"cash"}]};
 
     async function seedDatabaseIfEmpty() {
       const snap = await getDocs(collection(db, "jobs"));
       if (snap.empty) {
-        const dayMap = {
-          "segunda": "Segunda-feira",
-          "terca": "Terça-feira",
-          "quarta": "Quarta-feira",
-          "quinta": "Quinta-feira",
-          "sexta": "Sexta-feira"
-        };
-
         for (const sem of ["semana1", "semana2"]) {
-          const semLabel = sem === "semana1" ? "Semana A" : "Semana B";
           const days = initialData.weeks[sem];
           for (const dayKey in days) {
             for (const item of days[dayKey]) {
               await addDoc(collection(db, "jobs"), {
                 client: item.name,
-                day: `${dayMap[dayKey]} (${semLabel})`,
+                week: sem,
+                day: dayKey,
                 price: parseFloat(item.value) || 0,
                 payment: item.pay || "cash",
                 duration: parseFloat(item.hours) || 0,
@@ -194,11 +222,11 @@
             }
           }
         }
-
         for (const item of initialData.outros) {
           await addDoc(collection(db, "jobs"), {
             client: item.name,
-            day: "Outros / Mensal",
+            week: "outros",
+            day: "geral",
             price: parseFloat(item.value) || 0,
             payment: item.pay || "cash",
             duration: parseFloat(item.hours) || 0,
@@ -213,27 +241,28 @@
     window.switchTab = function(tab) {
       document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
       document.querySelectorAll('.container > div').forEach(div => div.classList.add('hidden'));
-      
       event.target.classList.add('active');
       document.getElementById('tab-' + tab).classList.remove('hidden');
     };
 
+    window.setWeek = function(week) {
+      currentWeek = week;
+      document.querySelectorAll('.week-btn').forEach(btn => btn.classList.remove('active'));
+      document.getElementById('btn-' + (week === 'semana1' ? 'sem1' : week === 'semana2' ? 'sem2' : 'outros')).classList.add('active');
+      renderJobs();
+      renderFinance();
+      renderTeam();
+    };
+
     window.toggleForm = function() {
-      const form = document.getElementById('job-form');
-      form.classList.toggle('hidden');
-      if(form.classList.contains('hidden')) {
-        document.getElementById('job-id').value = '';
-        document.getElementById('job-client').value = '';
-        document.getElementById('job-price').value = '';
-        document.getElementById('job-duration').value = '';
-        document.getElementById('job-horario').value = '';
-      }
+      document.getElementById('job-form').classList.toggle('hidden');
     };
 
     window.saveJob = async function() {
       const id = document.getElementById('job-id').value;
       const job = {
         client: document.getElementById('job-client').value,
+        week: document.getElementById('job-week').value,
         day: document.getElementById('job-day').value,
         price: parseFloat(document.getElementById('job-price').value) || 0,
         payment: document.getElementById('job-payment').value,
@@ -241,7 +270,7 @@
         horario: document.getElementById('job-horario').value
       };
 
-      if(!job.client) return alert('Por favor, informe o nome do cliente.');
+      if(!job.client) return alert('Informe o cliente.');
 
       if(id) {
         await updateDoc(doc(db, "jobs", id), job);
@@ -252,22 +281,9 @@
     };
 
     window.deleteJob = async function(id) {
-      if(confirm('Deseja excluir este agendamento?')) {
+      if(confirm('Excluir este agendamento?')) {
         await deleteDoc(doc(db, "jobs", id));
       }
-    };
-
-    window.editJob = function(id) {
-      const job = jobsData.find(j => j.id === id);
-      if(!job) return;
-      document.getElementById('job-id').value = job.id;
-      document.getElementById('job-client').value = job.client;
-      document.getElementById('job-day').value = job.day;
-      document.getElementById('job-price').value = job.price;
-      document.getElementById('job-payment').value = job.payment;
-      document.getElementById('job-duration').value = job.duration;
-      document.getElementById('job-horario').value = job.horario || '';
-      document.getElementById('job-form').classList.remove('hidden');
     };
 
     onSnapshot(collection(db, "jobs"), (snapshot) => {
@@ -281,28 +297,45 @@
     });
 
     function renderJobs() {
-      const list = document.getElementById('jobs-list');
-      if(jobsData.length === 0) {
-        list.innerHTML = '<p style="text-align:center; color:var(--subtext); margin-top:20px;">Importando dados...</p>';
+      const container = document.getElementById('jobs-container');
+      const filtered = jobsData.filter(j => j.week === currentWeek);
+      
+      if(filtered.length === 0) {
+        container.innerHTML = '<p style="text-align:center; color:var(--subtext); margin-top:20px;">Carregando agendamentos...</p>';
         return;
       }
-      list.innerHTML = jobsData.map(j => `
-        <div class="card">
-          <div class="card-header">
-            <span class="card-title">${j.client}</span>
-            <span class="badge ${j.payment.toLowerCase() === 'cash' ? 'badge-cash' : 'badge-transfer'}">${j.payment.toUpperCase()}</span>
-          </div>
-          <div style="font-size:0.9rem; color:var(--subtext); margin-bottom:5px;">📅 ${j.day} ${j.horario ? '| 🕒 ' + j.horario : ''}</div>
-          <div style="font-size:0.9rem; color:var(--subtext); margin-bottom:10px;">⏱️ ${j.duration}h | £${j.price}</div>
-          <button class="btn" style="background:#334155; color:white; padding:6px;" onclick="editJob('${j.id}')">Editar</button>
-          <button class="btn btn-danger" style="padding:6px;" onclick="deleteJob('${j.id}')">Excluir</button>
-        </div>
-      `).join('');
+
+      const daysOrder = ["segunda", "terca", "quarta", "quinta", "sexta", "geral"];
+      const dayNames = { segunda: "Segunda-feira", terca: "Terça-feira", quarta: "Quarta-feira", quinta: "Quinta-feira", sexta: "Sexta-feira", geral: "Lista Geral" };
+
+      let html = '';
+      daysOrder.forEach(day => {
+        const dayJobs = filtered.filter(j => j.day === day);
+        if(dayJobs.length > 0) {
+          html += `<div class="day-header">${dayNames[day]}</div>`;
+          dayJobs.forEach(j => {
+            html += `
+              <div class="job-item">
+                <div class="job-info">
+                  <div class="job-title">${j.client}</div>
+                  <div class="job-sub">${j.horario ? '🕒 ' + j.horario + ' | ' : ''}⏱️ ${j.duration}h | £${j.price}</div>
+                </div>
+                <div>
+                  <span class="badge ${j.payment.toLowerCase() === 'cash' ? 'badge-cash' : 'badge-transfer'}">${j.payment.toUpperCase()}</span>
+                  <button style="background:none; border:none; color:var(--danger); margin-left:8px; font-weight:bold; cursor:pointer;" onclick="deleteJob('${j.id}')">✕</button>
+                </div>
+              </div>
+            `;
+          });
+        }
+      });
+      container.innerHTML = html;
     }
 
     function renderFinance() {
+      const filtered = jobsData.filter(j => j.week === currentWeek);
       let total = 0, cash = 0, transfer = 0;
-      jobsData.forEach(j => {
+      filtered.forEach(j => {
         total += j.price;
         if(j.payment.toLowerCase() === 'cash') cash += j.price;
         else transfer += j.price;
@@ -313,24 +346,74 @@
     }
 
     function renderTeam() {
-      const teamData = [
-        { name: "Roberta", rate: 15.00, hours: 33.93 },
-        { name: "Lorruama", rate: 12.21, hours: 33.93 },
-        { name: "Victor Hugo", rate: 12.21, hours: 21.80 }
-      ];
+      const teamData = {
+        semana1: [
+          { name: "Roberta", rate: 15.00, hours: 33.93 },
+          { name: "Lorruama", rate: 12.21, hours: 33.93 },
+          { name: "Victor Hugo", rate: 12.21, hours: 21.80 }
+        ],
+        semana2: [
+          { name: "Roberta", rate: 15.00, hours: 32.00 },
+          { name: "Lorruama", rate: 12.21, hours: 32.00 },
+          { name: "Victor Hugo", rate: 12.21, hours: 20.00 }
+        ],
+        outros: []
+      };
 
+      const members = teamData[currentWeek] || [];
       const teamContainer = document.getElementById('team-stats');
-      teamContainer.innerHTML = teamData.map(member => {
+      
+      if(members.length === 0) {
+        teamContainer.innerHTML = '<p style="text-align:center; color:var(--subtext);">Sem dados de equipe para esta seleção.</p>';
+        return;
+      }
+
+      teamContainer.innerHTML = members.map(member => {
         const pay = member.hours * member.rate;
         return `
           <div style="padding:10px 0; border-bottom:1px solid #334155;">
             <div style="font-weight:bold; color:var(--accent);">${member.name} (£${member.rate.toFixed(2)}/h)</div>
-            <div style="font-size:0.9rem; color:var(--subtext);">Horas da semana: <strong>${member.hours.toFixed(2)}h</strong></div>
+            <div style="font-size:0.9rem; color:var(--subtext);">Horas trabalhadas: <strong>${member.hours.toFixed(2)}h</strong></div>
             <div style="font-size:0.9rem; color:var(--success);">Pagamento total: <strong>£${pay.toFixed(2)}</strong></div>
           </div>
         `;
       }).join('');
     }
+
+    // VISITAS
+    window.toggleVisitForm = function() {
+      document.getElementById('visit-form').classList.toggle('hidden');
+    };
+
+    window.saveVisit = async function() {
+      const client = document.getElementById('visit-client').value;
+      const contact = document.getElementById('visit-contact').value;
+      const notes = document.getElementById('visit-notes').value;
+
+      if(!client) return alert('Informe o nome do cliente.');
+
+      await addDoc(collection(db, "visits"), { client, contact, notes });
+      document.getElementById('visit-client').value = '';
+      document.getElementById('visit-contact').value = '';
+      document.getElementById('visit-notes').value = '';
+      toggleVisitForm();
+    };
+
+    onSnapshot(collection(db, "visits"), (snapshot) => {
+      const visitsList = document.getElementById('visits-list');
+      let html = '';
+      snapshot.forEach(docSnap => {
+        const v = docSnap.data();
+        html += `
+          <div class="card">
+            <div class="card-title">${v.client}</div>
+            <div style="font-size:0.85rem; color:var(--subtext); margin:5px 0;">📍 ${v.contact}</div>
+            <div style="font-size:0.9rem; color:var(--text);">${v.notes}</div>
+          </div>
+        `;
+      });
+      visitsList.innerHTML = html || '<p style="text-align:center; color:var(--subtext);">Nenhuma visita registrada.</p>';
+    });
   </script>
 </body>
 </html>
