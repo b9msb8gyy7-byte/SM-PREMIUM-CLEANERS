@@ -2,124 +2,296 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Cleaning Management UK</title>
-  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>SM Premium Cleaners</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Cleaning App">
-  
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            brand: { 50: '#f0f9ff', 500: '#0284c7', 600: '#0369a1', 700: '#075985' }
-          }
-        }
-      }
-    }
-  </script>
+  <meta name="apple-mobile-web-app-title" content="SM Cleaners">
+  <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/995/995053.png">
   <style>
-    body { -webkit-tap-highlight-color: transparent; }
+    :root {
+      --bg: #0f172a;
+      --card: #1e293b;
+      --accent: #38bdf8;
+      --text: #f8fafc;
+      --subtext: #94a3b8;
+      --success: #22c55e;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background-color: var(--bg); color: var(--text); padding-bottom: 80px; }
+    header { background: var(--card); padding: 15px 20px; text-align: center; border-bottom: 1px solid #334155; position: sticky; top: 0; z-index: 10; }
+    header h1 { font-size: 1.2rem; color: var(--accent); }
+    .nav-tabs { display: flex; background: var(--card); border-bottom: 1px solid #334155; position: sticky; top: 51px; z-index: 10; }
+    .tab-btn { flex: 1; padding: 12px; text-align: center; background: none; border: none; color: var(--subtext); font-weight: bold; cursor: pointer; border-bottom: 2px solid transparent; }
+    .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+    .container { padding: 15px; }
+    .card { background: var(--card); border-radius: 12px; padding: 15px; margin-bottom: 15px; border: 1px solid #334155; }
+    .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+    .card-title { font-weight: bold; color: var(--accent); }
+    .badge { padding: 4px 8px; border-radius: 6px; font-size: 0.8rem; font-weight: bold; }
+    .badge-cash { background: rgba(34, 197, 94, 0.2); color: var(--success); }
+    .badge-transfer { background: rgba(56, 189, 248, 0.2); color: var(--accent); }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .stat-box { background: #0f172a; padding: 12px; border-radius: 8px; text-align: center; }
+    .stat-val { font-size: 1.2rem; font-weight: bold; margin-top: 5px; }
+    .btn { width: 100%; padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+    .btn-primary { background: var(--accent); color: #0f172a; }
+    .btn-danger { background: var(--danger); color: white; margin-top: 5px; }
+    input, select { width: 100%; padding: 10px; margin-top: 5px; margin-bottom: 10px; border-radius: 6px; border: 1px solid #334155; background: #0f172a; color: white; }
+    label { font-size: 0.85rem; color: var(--subtext); }
+    .hidden { display: none; }
   </style>
 </head>
-<body class="bg-gray-100 text-gray-800 select-none pb-24">
+<body>
 
-  <!-- Cabeçalho -->
-  <header class="bg-brand-600 text-white p-4 pt-12 sticky top-0 z-50 shadow-md flex justify-between items-center">
-    <div>
-      <h1 class="text-xl font-bold tracking-tight">Cleaning Schedule</h1>
-      <p class="text-xs text-brand-50 font-medium">Reino Unido (£)</p>
-    </div>
-    <div class="flex bg-brand-700 rounded-lg p-1 text-xs">
-      <button onclick="switchWeek('semana1')" id="btn-sem1" class="px-3 py-1 rounded-md font-semibold bg-white text-brand-700 shadow">Semana 1</button>
-      <button onclick="switchWeek('semana2')" id="btn-sem2" class="px-3 py-1 rounded-md font-semibold text-white">Semana 2</button>
-    </div>
+  <header>
+    <h1>SM Premium Cleaners</h1>
   </header>
 
-  <!-- Filtro por Dia da Semana -->
-  <nav class="bg-white border-b border-gray-200 px-2 py-3 flex justify-around text-sm font-medium sticky top-24 z-40">
-    <button onclick="renderDay('segunda')" class="day-btn px-3 py-1 rounded-full bg-brand-50 text-brand-600 font-bold" data-day="segunda">Seg</button>
-    <button onclick="renderDay('terca')" class="day-btn px-3 py-1 rounded-full text-gray-500" data-day="terca">Ter</button>
-    <button onclick="renderDay('quarta')" class="day-btn px-3 py-1 rounded-full text-gray-500" data-day="quarta">Qua</button>
-    <button onclick="renderDay('quinta')" class="day-btn px-3 py-1 rounded-full text-gray-500" data-day="quinta">Qui</button>
-    <button onclick="renderDay('sexta')" class="day-btn px-3 py-1 rounded-full text-gray-500" data-day="sexta">Sex</button>
-  </nav>
+  <div class="nav-tabs">
+    <button class="tab-btn active" onclick="switchTab('agenda')">Agenda</button>
+    <button class="tab-btn" onclick="switchTab('financeiro')">Financeiro</button>
+    <button class="tab-btn" onclick="switchTab('equipe')">Equipe</button>
+  </div>
 
-  <!-- Resumo de Totais do Dia -->
-  <div class="max-w-md mx-auto p-4">
-    <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 mb-4 flex justify-between items-center">
-      <div>
-        <span class="text-xs text-gray-400 font-semibold uppercase tracking-wider">Total do Dia</span>
-        <h2 id="day-total-value" class="text-2xl font-black text-gray-900">£0.00</h2>
+  <div class="container">
+    <!-- ABA AGENDA -->
+    <div id="tab-agenda">
+      <button class="btn btn-primary" style="margin-bottom: 15px;" onclick="toggleForm()">+ Nova Faxina</button>
+      
+      <div id="job-form" class="card hidden">
+        <h3 id="form-title" style="margin-bottom:10px;">Adicionar Agendamento</h3>
+        <input type="hidden" id="job-id">
+        <label>Cliente / Endereço</label>
+        <input type="text" id="job-client" placeholder="Ex: Mr. Smith - 12 High St">
+        
+        <label>Dia da Semana</label>
+        <select id="job-day">
+          <option>Segunda-feira (Semana A)</option>
+          <option>Terça-feira (Semana A)</option>
+          <option>Quarta-feira (Semana A)</option>
+          <option>Quinta-feira (Semana A)</option>
+          <option>Sexta-feira (Semana A)</option>
+          <option>Segunda-feira (Semana B)</option>
+          <option>Terça-feira (Semana B)</option>
+          <option>Quarta-feira (Semana B)</option>
+          <option>Quinta-feira (Semana B)</option>
+          <option>Sexta-feira (Semana B)</option>
+        </select>
+
+        <div class="grid-2">
+          <div>
+            <label>Valor Total (£)</label>
+            <input type="number" id="job-price" placeholder="60">
+          </div>
+          <div>
+            <label>Pagamento</label>
+            <select id="job-payment">
+              <option value="Cash">Cash</option>
+              <option value="Transfer">Transfer</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div>
+            <label>Duração (Horas)</label>
+            <input type="number" step="0.5" id="job-duration" placeholder="3">
+          </div>
+          <div>
+            <label>Funcionário</label>
+            <select id="job-worker">
+              <option value="Roberta">Roberta</option>
+              <option value="Lorruama">Lorruama</option>
+              <option value="Victor Hugo">Victor Hugo</option>
+            </select>
+          </div>
+        </div>
+
+        <button class="btn btn-primary" onclick="saveJob()">Salvar Agendamento</button>
+        <button class="btn" style="background:#334155; color:white;" onclick="toggleForm()">Cancelar</button>
       </div>
-      <div class="text-right">
-        <span class="text-xs text-gray-400 font-semibold uppercase tracking-wider">Serviços</span>
-        <h3 id="day-total-jobs" class="text-lg font-bold text-gray-700">0</h3>
+
+      <div id="jobs-list">
+        <p style="text-align:center; color:var(--subtext); margin-top:20px;">Carregando agendamentos...</p>
       </div>
     </div>
 
-    <!-- Lista Dinâmica de Trabalhos -->
-    <div id="jobs-container" class="space-y-3"></div>
+    <!-- ABA FINANCEIRO -->
+    <div id="tab-financeiro" class="hidden">
+      <div class="card">
+        <div class="card-title" style="margin-bottom:15px;">Resumo Quinzenal</div>
+        <div class="grid-2">
+          <div class="stat-box">
+            <div style="color:var(--subtext); font-size:0.8rem;">Total Faturado</div>
+            <div class="stat-val" id="total-revenue" style="color:var(--success);">£0.00</div>
+          </div>
+          <div class="stat-box">
+            <div style="color:var(--subtext); font-size:0.8rem;">Total em Cash</div>
+            <div class="stat-val" id="total-cash" style="color:var(--warning);">£0.00</div>
+          </div>
+        </div>
+        <div class="stat-box" style="margin-top:10px;">
+          <div style="color:var(--subtext); font-size:0.8rem;">Total em Transferência</div>
+          <div class="stat-val" id="total-transfer" style="color:var(--accent);">£0.00</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ABA EQUIPE -->
+    <div id="tab-equipe" class="hidden">
+      <div class="card">
+        <div class="card-title" style="margin-bottom:15px;">Horas e Pagamentos por Funcionário</div>
+        <div id="team-stats">
+          <p style="text-align:center; color:var(--subtext);">Carregando dados da equipe...</p>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <script>
-    const appData = {"weeks":{"semana1":{"segunda":[{"id":"ymdwvm3","name":"Bernadette","hours":10,"value":200,"pay":"transfer","horario":"08:00","horarioFim":"10:30","rate":20,"people":4},{"id":"mk68t9u","name":"Bushra","hours":4,"value":84,"pay":"transfer","horario":"10:45","horarioFim":"11:45","rate":21,"people":4},{"id":"nrp39bq","name":"Katrina","hours":5,"value":105,"pay":"transfer","horario":"12:00","horarioFim":"13:15","rate":21,"people":4},{"id":"7om2tov","name":"Jessica","hours":3,"value":63,"pay":"transfer","horario":"13:35","horarioFim":"14:20","rate":21,"people":4},{"id":"4293cb1","name":"Rachel Nova","hours":3.5,"value":73.5,"pay":"cash","horario":"14:40","horarioFim":"15:33","rate":21,"people":4},{"id":"cn0q38p","name":"Tom","hours":3,"value":63,"pay":"cash","horario":"15:40","horarioFim":"16:25","rate":21,"people":4},{"id":"2bj0hiz","name":"Rachel Fazendinha ","hours":3,"value":63,"pay":"cash","horario":"16:40","horarioFim":"17:25","rate":21,"people":4}],"terca":[{"id":"451pa4c","name":"Rhiannon","hours":4,"value":84,"pay":"cash","horario":"08:00","horarioFim":"08:48","rate":21,"people":5},{"id":"dqpmtce","name":"Sasha","hours":3,"value":63,"pay":"cash","horario":"09:00","horarioFim":"09:36","rate":21,"people":5},{"id":"6jwmysh","name":"Phoebe","hours":3,"value":63,"pay":"cash","horario":"09:40","horarioFim":"10:16","rate":21,"people":5},{"id":"ebgic8p","name":"Vanya","hours":5,"value":100,"pay":"transfer","horario":"10:20","horarioFim":"11:20","rate":20,"people":5},{"id":"lr21c5o","name":"Brent","hours":4,"value":84,"pay":"transfer","horario":"11:35","horarioFim":"12:23","rate":21,"people":5},{"id":"lds4ch7","name":"Rod","hours":3,"value":63,"pay":"transfer","horario":"12:25","horarioFim":"13:01","rate":21,"people":5},{"id":"bag0ua5","name":"Anne Marie","hours":2,"value":42,"pay":"cash","horario":"13:40","horarioFim":"14:04","rate":21,"people":5},{"id":"nl4e3ey","name":"Caroline","hours":2,"value":42,"pay":"cash","horario":"14:30","horarioFim":"15:00","rate":21,"people":4},{"id":"hp053v8","name":"Carol","hours":3,"value":63,"pay":"transfer","horario":"15:10","horarioFim":"15:46","rate":21,"people":5},{"id":"dmzpowp","name":"Rachel Porquinho ","horario":"16:15","horarioFim":"17:03","hours":4,"value":84,"rate":21,"people":5,"pay":"cash"},{"id":"jqsf3f0","name":"Helen","horario":"17:35","horarioFim":"18:23","hours":4,"value":0,"rate":0,"people":5,"pay":"cash"}],"quarta":[{"id":"afpeuk0","name":"Jo","hours":6,"value":120,"pay":"cash","horario":"08:00","horarioFim":"09:12","rate":20,"people":5},{"id":"6qzcyuz","name":"Katie Claverton","hours":8,"value":160,"pay":"transfer","horario":"09:30","horarioFim":"11:06","rate":20,"people":5},{"id":"1u68sgb","name":"Angie","hours":5,"value":105,"pay":"transfer","horario":"11:20","horarioFim":"12:20","rate":21,"people":5},{"id":"ud27igd","name":"Sarah","hours":4,"value":84,"pay":"transfer","horario":"12:50","horarioFim":"13:38","rate":21,"people":5},{"id":"co5y74z","name":"Gemma","hours":3,"value":63,"pay":"transfer","horario":"13:45","horarioFim":"14:21","rate":21,"people":5},{"id":"a40iej3","name":"Jaime","hours":2,"value":42,"pay":"cash","horario":"14:35","horarioFim":"14:59","rate":21,"people":5},{"id":"sfhm4ve","name":"Sean","horario":"15:15","horarioFim":"15:51","hours":3,"value":63,"rate":21,"people":5,"pay":"cash"},{"id":"n1v9v83","name":"Morwenna ","horario":"16:20","horarioFim":"17:32","hours":6,"value":125,"rate":20.83,"people":5,"pay":"cash"}],"quinta":[{"id":"y26y9r2","name":"Emma","hours":4,"value":80,"pay":"transfer","horario":"07:50","horarioFim":"08:38","rate":20,"people":5},{"id":"yw30brp","name":"Ian","hours":3,"value":60,"pay":"cash","horario":"09:20","horarioFim":"09:56","rate":20,"people":5},{"id":"ctamczr","name":"Anne","hours":4,"value":88,"pay":"transfer","horario":"10:00","horarioFim":"10:48","rate":22,"people":5},{"id":"rx9g3xh","name":"Lynne","hours":4,"value":84,"pay":"cash","horario":"10:55","horarioFim":"11:43","rate":21,"people":5},{"id":"3aygizv","name":"David","hours":6,"value":120,"pay":"transfer","horario":"12:15","horarioFim":"13:27","rate":20,"people":5},{"id":"r2k5dqc","name":"James","hours":4,"value":84,"pay":"cash","horario":"14:00","horarioFim":"14:48","rate":21,"people":5},{"id":"y3s934o","name":"Arabee","hours":4,"value":84,"pay":"transfer","horario":"15:00","horarioFim":"15:48","rate":21,"people":5},{"id":"0v8kjxc","name":"Jane","hours":6,"value":120,"pay":"cash","horario":"16:15","horarioFim":"17:27","rate":20,"people":5}],"sexta":[{"id":"2llihu0","name":"Bernadette","hours":9,"value":180,"pay":"transfer","horario":"08:00","horarioFim":"10:15","rate":20,"people":4},{"id":"oti6b0m","name":"Pippa","hours":6,"value":132,"pay":"transfer","horario":"10:40","horarioFim":"12:10","rate":22,"people":4},{"id":"y4t058s","name":"Chris","hours":3,"value":63,"pay":"transfer","horario":"12:50","horarioFim":"13:35","rate":21,"people":4},{"id":"4hch2t7","name":"Rob","hours":3,"value":63,"pay":"cash","horario":"13:50","horarioFim":"14:35","rate":21,"people":4},{"id":"3bms3gc","name":"Tim","hours":2,"value":42,"pay":"transfer","horario":"14:40","horarioFim":"15:40","rate":21,"people":2}]},"semana2":{"segunda":[{"id":"5mu2ue6","name":"Bernadette","hours":10,"value":200,"pay":"transfer","horario":"08:00","horarioFim":"10:30","rate":20,"people":1},{"id":"6gs48go","name":"Bushra","hours":4,"value":84,"pay":"transfer","horario":"10:45","horarioFim":"11:45","rate":21,"people":1}],"terca":[],"quarta":[],"quinta":[],"sexta":[]}}};
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    let currentWeek = 'semana1';
-    let currentDay = 'segunda';
+    const firebaseConfig = {
+      apiKey: "AIzaSyCgqJMnBcwCI4eEEOS3wxa3uFrmcXMN9dA",
+      authDomain: "cleaningapp-f7e58.firebaseapp.com",
+      projectId: "cleaningapp-f7e58",
+      storageBucket: "cleaningapp-f7e58.firebasestorage.app",
+      messagingSenderId: "499257274532",
+      appId: "1:499257274532:web:4dea74fe36d6258d793631"
+    };
 
-    function switchWeek(week) {
-      currentWeek = week;
-      document.getElementById('btn-sem1').className = week === 'semana1' ? 'px-3 py-1 rounded-md font-semibold bg-white text-brand-700 shadow' : 'px-3 py-1 rounded-md font-semibold text-white';
-      document.getElementById('btn-sem2').className = week === 'semana2' ? 'px-3 py-1 rounded-md font-semibold bg-white text-brand-700 shadow' : 'px-3 py-1 rounded-md font-semibold text-white';
-      renderDay(currentDay);
-    }
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    let jobsData = [];
 
-    function renderDay(day) {
-      currentDay = day;
-      document.querySelectorAll('.day-btn').forEach(btn => {
-        btn.className = btn.dataset.day === day ? 'day-btn px-3 py-1 rounded-full bg-brand-50 text-brand-600 font-bold' : 'day-btn px-3 py-1 rounded-full text-gray-500';
-      });
+    window.switchTab = function(tab) {
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.container > div').forEach(div => div.classList.add('hidden'));
+      
+      event.target.classList.add('active');
+      document.getElementById('tab-' + tab).classList.remove('hidden');
+    };
 
-      const jobs = appData.weeks[currentWeek]?.[day] || [];
-      const container = document.getElementById('jobs-container');
-      container.innerHTML = '';
-      let dayTotal = 0;
-
-      if(jobs.length === 0) {
-        container.innerHTML = '<div class="text-center text-gray-400 py-8">Nenhum agendamento para este dia.</div>';
+    window.toggleForm = function() {
+      const form = document.getElementById('job-form');
+      form.classList.toggle('hidden');
+      if(form.classList.contains('hidden')) {
+        document.getElementById('job-id').value = '';
+        document.getElementById('job-client').value = '';
+        document.getElementById('job-price').value = '';
+        document.getElementById('job-duration').value = '';
       }
+    };
 
-      jobs.forEach(job => {
-        const val = Number(job.value) || 0;
-        dayTotal += val;
-        const isCash = job.pay === 'cash';
-        container.innerHTML += `
-          <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100 flex justify-between items-center">
-            <div class="flex items-center gap-3">
-              <div class="w-10 h-10 rounded-full ${isCash ? 'bg-emerald-100 text-emerald-700' : 'bg-sky-100 text-sky-700'} flex items-center justify-center font-bold text-sm">
-                ${isCash ? '£' : 'T'}
-              </div>
-              <div>
-                <h4 class="font-bold text-gray-900">${job.name}</h4>
-                <p class="text-xs text-gray-500 font-medium">${job.horario || '--:--'} - ${job.horarioFim || '--:--'} • ${job.people} pess.</p>
-              </div>
-            </div>
-            <div class="text-right">
-              <span class="block font-black text-gray-900 text-lg">£${val.toFixed(2)}</span>
-              <span class="text-xs text-gray-400 font-medium">${job.hours}h (£${job.rate}/h)</span>
-            </div>
-          </div>`;
+    window.saveJob = async function() {
+      const id = document.getElementById('job-id').value;
+      const job = {
+        client: document.getElementById('job-client').value,
+        day: document.getElementById('job-day').value,
+        price: parseFloat(document.getElementById('job-price').value) || 0,
+        payment: document.getElementById('job-payment').value,
+        duration: parseFloat(document.getElementById('job-duration').value) || 0,
+        worker: document.getElementById('job-worker').value
+      };
+
+      if(!job.client) return alert('Por favor, informe o cliente.');
+
+      if(id) {
+        await updateDoc(doc(db, "jobs", id), job);
+      } else {
+        await addDoc(collection(db, "jobs"), job);
+      }
+      toggleForm();
+    };
+
+    window.deleteJob = async function(id) {
+      if(confirm('Deseja excluir este agendamento?')) {
+        await deleteDoc(doc(db, "jobs", id));
+      }
+    };
+
+    window.editJob = function(id) {
+      const job = jobsData.find(j => j.id === id);
+      if(!job) return;
+      document.getElementById('job-id').value = job.id;
+      document.getElementById('job-client').value = job.client;
+      document.getElementById('job-day').value = job.day;
+      document.getElementById('job-price').value = job.price;
+      document.getElementById('job-payment').value = job.payment;
+      document.getElementById('job-duration').value = job.duration;
+      document.getElementById('job-worker').value = job.worker;
+      document.getElementById('job-form').classList.remove('hidden');
+    };
+
+    onSnapshot(collection(db, "jobs"), (snapshot) => {
+      jobsData = [];
+      snapshot.forEach((doc) => {
+        jobsData.push({ id: doc.id, ...doc.data() });
       });
+      renderJobs();
+      renderFinance();
+      renderTeam();
+    });
 
-      document.getElementById('day-total-value').innerText = `£${dayTotal.toFixed(2)}`;
-      document.getElementById('day-total-jobs').innerText = jobs.length;
+    function renderJobs() {
+      const list = document.getElementById('jobs-list');
+      if(jobsData.length === 0) {
+        list.innerHTML = '<p style="text-align:center; color:var(--subtext); margin-top:20px;">Nenhum agendamento cadastrado.</p>';
+        return;
+      }
+      list.innerHTML = jobsData.map(j => `
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">${j.client}</span>
+            <span class="badge ${j.payment === 'Cash' ? 'badge-cash' : 'badge-transfer'}">${j.payment}</span>
+          </div>
+          <div style="font-size:0.9rem; color:var(--subtext); margin-bottom:5px;">📅 ${j.day}</div>
+          <div style="font-size:0.9rem; color:var(--subtext); margin-bottom:10px;">👤 ${j.worker} | ⏱️ ${j.duration}h | £${j.price}</div>
+          <button class="btn" style="background:#334155; color:white; padding:6px;" onclick="editJob('${j.id}')">Editar</button>
+          <button class="btn btn-danger" style="padding:6px;" onclick="deleteJob('${j.id}')">Excluir</button>
+        </div>
+      `).join('');
     }
 
-    renderDay('segunda');
+    function renderFinance() {
+      let total = 0, cash = 0, transfer = 0;
+      jobsData.forEach(j => {
+        total += j.price;
+        if(j.payment === 'Cash') cash += j.price;
+        else transfer += j.price;
+      });
+      document.getElementById('total-revenue').innerText = `£${total.toFixed(2)}`;
+      document.getElementById('total-cash').innerText = `£${cash.toFixed(2)}`;
+      document.getElementById('total-transfer').innerText = `£${transfer.toFixed(2)}`;
+    }
+
+    function renderTeam() {
+      const rates = { "Roberta": 12, "Lorruama": 12, "Victor Hugo": 12 };
+      const team = { "Roberta": 0, "Lorruama": 0, "Victor Hugo": 0 };
+      
+      jobsData.forEach(j => {
+        if(team[j.worker] !== undefined) {
+          team[j.worker] += j.duration;
+        }
+      });
+
+      const teamContainer = document.getElementById('team-stats');
+      teamContainer.innerHTML = Object.keys(team).map(worker => {
+        const hours = team[worker];
+        const pay = hours * rates[worker];
+        return `
+          <div style="padding:10px 0; border-bottom:1px solid #334155;">
+            <div style="font-weight:bold; color:var(--accent);">${worker}</div>
+            <div style="font-size:0.9rem; color:var(--subtext);">Horas trabalhadas: <strong>${hours}h</strong></div>
+            <div style="font-size:0.9rem; color:var(--success);">Pagamento total: <strong>£${pay.toFixed(2)}</strong></div>
+          </div>
+        `;
+      }).join('');
+    }
   </script>
 </body>
 </html>
