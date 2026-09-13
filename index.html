@@ -46,6 +46,7 @@
     .badge-transfer { background: rgba(56, 189, 248, 0.2); color: var(--accent); }
 
     .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
     .stat-box { background: #0f172a; padding: 12px; border-radius: 8px; text-align: center; }
     .stat-val { font-size: 1.1rem; font-weight: bold; margin-top: 5px; }
     
@@ -169,148 +170,262 @@
       <button class="btn btn-primary" style="margin-bottom: 15px;" onclick="toggleVisitForm()">+ Nova Visita / Orçamento</button>
       
       <div id="visit-form" class="card hidden">
-        <h3 style="margin-bottom:10px;">Anotação de Visita</h3>
+        <h3 style="margin-bottom:10px;">Detalhes da Visita</h3>
+        <input type="hidden" id="visit-id">
         <label>Nome do Cliente</label>
         <input type="text" id="visit-client">
-        <label>Endereço / Telefone</label>
+        
+        <label>Endereço / Contato</label>
         <input type="text" id="visit-contact">
-        <label>Detalhes / Orçamento</label>
+
+        <div class="grid-3">
+          <div>
+            <label>Quartos</label>
+            <input type="number" id="visit-bedrooms" value="0">
+          </div>
+          <div>
+            <label>Banheiros</label>
+            <input type="number" id="visit-bathrooms" value="0">
+          </div>
+          <div>
+            <label>Salas</label>
+            <input type="number" id="visit-livingrooms" value="0">
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div>
+            <label>Possui Pets?</label>
+            <select id="visit-pets">
+              <option value="Não">Não</option>
+              <option value="Sim (Cão)">Sim (Cão)</option>
+              <option value="Sim (Gato)">Sim (Gato)</option>
+              <option value="Sim (Outros)">Sim (Outros)</option>
+            </select>
+          </div>
+          <div>
+            <label>Possui Crianças?</label>
+            <select id="visit-kids">
+              <option value="Não">Não</option>
+              <option value="Sim">Sim</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div>
+            <label>Valor Proposto (£)</label>
+            <input type="number" id="visit-price" placeholder="80">
+          </div>
+          <div>
+            <label>Frequência</label>
+            <select id="visit-freq">
+              <option value="Semanal">Semanal</option>
+              <option value="Quinzenal">Quinzenal</option>
+              <option value="Mensal">Mensal</option>
+              <option value="Uma vez">Uma vez</option>
+            </select>
+          </div>
+        </div>
+
+        <label>Observações / Requisitos</label>
         <textarea id="visit-notes" rows="3"></textarea>
+
         <button class="btn btn-primary" onclick="saveVisit()">Salvar Visita</button>
+        <button class="btn" style="background:#334155; color:white;" onclick="toggleVisitForm()">Cancelar</button>
       </div>
 
       <div id="visits-list"></div>
     </div>
   </div>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getFirestore, collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyCgqJMnBcwCI4eEEOS3wxa3uFrmcXMN9dA",
-      authDomain: "cleaningapp-f7e58.firebaseapp.com",
-      projectId: "cleaningapp-f7e58",
-      storageBucket: "cleaningapp-f7e58.firebasestorage.app",
-      messagingSenderId: "499257274532",
-      appId: "1:499257274532:web:4dea74fe36d6258d793631"
+  <script>
+    let appData = {
+      weeks: {
+        semana1: {
+          segunda: [
+            { id: "1", client: "Bernadette", duration: 10, price: 200, payment: "transfer", horario: "08:00" },
+            { id: "2", client: "Bushra", duration: 4, price: 84, payment: "transfer", horario: "10:45" },
+            { id: "3", client: "Katrina", duration: 5, price: 105, payment: "transfer", horario: "12:00" },
+            { id: "4", client: "Jessica", duration: 3, price: 63, payment: "transfer", horario: "13:35" },
+            { id: "5", client: "Rachel Nova", duration: 3.5, price: 73.5, payment: "cash", horario: "14:40" },
+            { id: "6", client: "Tom", duration: 3, price: 63, payment: "cash", horario: "15:40" },
+            { id: "7", client: "Rachel Fazendinha", duration: 3, price: 63, payment: "cash", horario: "16:40" }
+          ],
+          terca: [
+            { id: "8", client: "Rhiannon", duration: 4, price: 84, payment: "cash", horario: "08:00" },
+            { id: "9", client: "Sasha", duration: 3, price: 63, payment: "cash", horario: "09:00" },
+            { id: "10", client: "Phoebe", duration: 3, price: 63, payment: "cash", horario: "09:40" },
+            { id: "11", client: "Vanya", duration: 5, price: 100, payment: "transfer", horario: "10:20" },
+            { id: "12", client: "Brent", duration: 4, price: 84, payment: "transfer", horario: "11:35" },
+            { id: "13", client: "Rod", duration: 3, price: 63, payment: "transfer", horario: "12:25" },
+            { id: "14", client: "Anne Marie", duration: 2, price: 42, payment: "cash", horario: "13:40" },
+            { id: "15", client: "Caroline", duration: 2, price: 42, payment: "cash", horario: "14:30" },
+            { id: "16", client: "Carol", duration: 3, price: 63, payment: "transfer", horario: "15:10" },
+            { id: "17", client: "Rachel Porquinho", duration: 4, price: 84, payment: "cash", horario: "16:15" },
+            { id: "18", client: "Helen", duration: 4, price: 0, payment: "cash", horario: "17:35" }
+          ],
+          quarta: [
+            { id: "19", client: "Jo", duration: 6, price: 120, payment: "cash", horario: "08:00" },
+            { id: "20", client: "Katie Claverton", duration: 8, price: 160, payment: "transfer", horario: "09:30" },
+            { id: "21", client: "Angie", duration: 5, price: 105, payment: "transfer", horario: "11:20" },
+            { id: "22", client: "Sarah", duration: 4, price: 84, payment: "transfer", horario: "12:50" },
+            { id: "23", client: "Gemma", duration: 3, price: 63, payment: "transfer", horario: "13:45" },
+            { id: "24", client: "Jaime", duration: 2, price: 42, payment: "cash", horario: "14:35" },
+            { id: "25", client: "Sean", duration: 3, price: 63, payment: "cash", horario: "15:15" },
+            { id: "26", client: "Morwenna", duration: 6, price: 125, payment: "cash", horario: "16:20" }
+          ],
+          quinta: [
+            { id: "27", client: "Emma", duration: 4, price: 80, payment: "transfer", horario: "07:50" },
+            { id: "28", client: "Ian", duration: 3, price: 60, payment: "cash", horario: "09:20" },
+            { id: "29", client: "Anne", duration: 4, price: 88, payment: "transfer", horario: "10:00" },
+            { id: "30", client: "Lynne", duration: 4, price: 84, payment: "cash", horario: "10:55" },
+            { id: "31", client: "David", duration: 6, price: 120, payment: "transfer", horario: "12:15" },
+            { id: "32", client: "James", duration: 4, price: 84, payment: "cash", horario: "14:00" },
+            { id: "33", client: "Arabee", duration: 4, price: 84, payment: "transfer", horario: "15:00" },
+            { id: "34", client: "Jane", duration: 6, price: 120, payment: "cash", horario: "16:15" }
+          ],
+          sexta: [
+            { id: "35", client: "Bernadette", duration: 9, price: 180, payment: "transfer", horario: "08:00" },
+            { id: "36", client: "Pippa", duration: 6, price: 132, payment: "transfer", horario: "10:40" },
+            { id: "37", client: "Chris", duration: 3, price: 63, payment: "transfer", horario: "12:50" },
+            { id: "38", client: "Rob", duration: 3, price: 63, payment: "cash", horario: "13:50" },
+            { id: "39", client: "Tim", duration: 2, price: 42, payment: "transfer", horario: "14:40" }
+          ]
+        },
+        semana2: {
+          segunda: [
+            { id: "40", client: "Bernadette", duration: 10, price: 200, payment: "transfer" },
+            { id: "41", client: "Bushra", duration: 4, price: 84, payment: "transfer" },
+            { id: "42", client: "Jessica", duration: 3, price: 63, payment: "transfer" },
+            { id: "43", client: "Katrina", duration: 5, price: 105, payment: "transfer" },
+            { id: "44", client: "Rachel Nova", duration: 3.5, price: 73.5, payment: "cash" },
+            { id: "45", client: "Rachel Fazendinha", duration: 3, price: 63, payment: "cash" },
+            { id: "46", client: "Jacqueline", duration: 6, price: 120, payment: "cash" }
+          ],
+          terca: [
+            { id: "47", client: "Rhiannon", duration: 4, price: 84, payment: "cash" },
+            { id: "48", client: "Sasha", duration: 3, price: 63, payment: "cash" },
+            { id: "49", client: "Phoebe", duration: 3, price: 63, payment: "cash" },
+            { id: "50", client: "Rod", duration: 3, price: 63, payment: "transfer" },
+            { id: "51", client: "Caroline", duration: 2, price: 42, payment: "cash" },
+            { id: "52", client: "Carol", duration: 3, price: 63, payment: "transfer" },
+            { id: "53", client: "Brent", duration: 4, price: 84, payment: "transfer" },
+            { id: "54", client: "Vanya", duration: 5, price: 100, payment: "transfer" }
+          ],
+          quarta: [
+            { id: "55", client: "Jo", duration: 6, price: 120, payment: "cash" },
+            { id: "56", client: "Katie Claverton", duration: 8, price: 160, payment: "transfer" },
+            { id: "57", client: "Angie", duration: 5, price: 105, payment: "transfer" },
+            { id: "58", client: "Sarah", duration: 4, price: 84, payment: "transfer" },
+            { id: "59", client: "Rachel Porquinho", duration: 4, price: 84, payment: "cash" },
+            { id: "60", client: "Lucia", duration: 4, price: 84, payment: "transfer" },
+            { id: "61", client: "Sean", duration: 3, price: 63, payment: "cash" }
+          ],
+          quinta: [
+            { id: "62", client: "Emma", duration: 4, price: 80, payment: "transfer" },
+            { id: "63", client: "Ian", duration: 3, price: 60, payment: "cash" },
+            { id: "64", client: "Anne", duration: 4, price: 88, payment: "transfer" },
+            { id: "65", client: "Arabee", duration: 4, price: 84, payment: "transfer" },
+            { id: "66", client: "Laura", duration: 6, price: 120, payment: "transfer" },
+            { id: "67", client: "Jane", duration: 6, price: 120, payment: "cash" },
+            { id: "68", client: "Susie", duration: 3, price: 63, payment: "cash" },
+            { id: "69", client: "Julia", duration: 6, price: 120, payment: "transfer" }
+          ],
+          sexta: [
+            { id: "70", client: "Bernadette", duration: 9, price: 180, payment: "transfer" },
+            { id: "71", client: "Pippa", duration: 6, price: 132, payment: "transfer" },
+            { id: "72", client: "Chris", duration: 4, price: 84, payment: "transfer" },
+            { id: "73", client: "James", duration: 4, price: 84, payment: "cash" },
+            { id: "74", client: "Tim", duration: 2, price: 42, payment: "transfer" },
+            { id: "75", client: "Rob", duration: 3, price: 63, payment: "cash" }
+          ]
+        },
+        outros: {
+          geral: [
+            { id: "76", client: "Morwenna", duration: 6, price: 125, payment: "cash" },
+            { id: "77", client: "Valerie", duration: 4, price: 80, payment: "cash" },
+            { id: "78", client: "Helen", duration: 4, price: 88, payment: "cash" }
+          ]
+        }
+      },
+      visits: []
     };
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    let jobsData = [];
-    let currentWeek = 'semana1';
-
-    const initialData = {"weeks":{"semana1":{"segunda":[{"id":"ymdwvm3","name":"Bernadette","hours":10,"value":200,"pay":"transfer","horario":"08:00"},{"id":"mk68t9u","name":"Bushra","hours":4,"value":84,"pay":"transfer","horario":"10:45"},{"id":"nrp39bq","name":"Katrina","hours":5,"value":105,"pay":"transfer","horario":"12:00"},{"id":"7om2tov","name":"Jessica","hours":3,"value":63,"pay":"transfer","horario":"13:35"},{"id":"4293cb1","name":"Rachel Nova","hours":3.5,"value":73.5,"pay":"cash","horario":"14:40"},{"id":"cn0q38p","name":"Tom","hours":3,"value":63,"pay":"cash","horario":"15:40"},{"id":"2bj0hiz","name":"Rachel Fazendinha ","hours":3,"value":63,"pay":"cash","horario":"16:40"}],"terca":[{"id":"451pa4c","name":"Rhiannon","hours":4,"value":84,"pay":"cash","horario":"08:00"},{"id":"dqpmtce","name":"Sasha","hours":3,"value":63,"pay":"cash","horario":"09:00"},{"id":"6jwmysh","name":"Phoebe","hours":3,"value":63,"pay":"cash","horario":"09:40"},{"id":"ebgic8p","name":"Vanya","hours":5,"value":100,"pay":"transfer","horario":"10:20"},{"id":"lr21c5o","name":"Brent","hours":4,"value":84,"pay":"transfer","horario":"11:35"},{"id":"lds4ch7","name":"Rod","hours":3,"value":63,"pay":"transfer","horario":"12:25"},{"id":"bag0ua5","name":"Anne Marie","hours":2,"value":42,"pay":"cash","horario":"13:40"},{"id":"nl4e3ey","name":"Caroline","hours":2,"value":42,"pay":"cash","horario":"14:30"},{"id":"hp053v8","name":"Carol","hours":3,"value":63,"pay":"transfer","horario":"15:10"},{"id":"dmzpowp","name":"Rachel Porquinho ","horario":"16:15","hours":4,"value":84,"pay":"cash"},{"id":"jqsf3f0","name":"Helen","horario":"17:35","hours":4,"value":0,"pay":"cash"}],"quarta":[{"id":"afpeuk0","name":"Jo","hours":6,"value":120,"pay":"cash","horario":"08:00"},{"id":"6qzcyuz","name":"Katie Claverton","hours":8,"value":160,"pay":"transfer","horario":"09:30"},{"id":"1u68sgb","name":"Angie","hours":5,"value":105,"pay":"transfer","horario":"11:20"},{"id":"ud27igd","name":"Sarah","hours":4,"value":84,"pay":"transfer","horario":"12:50"},{"id":"co5y74z","name":"Gemma","hours":3,"value":63,"pay":"transfer","horario":"13:45"},{"id":"a40iej3","name":"Jaime","hours":2,"value":42,"pay":"cash","horario":"14:35"},{"id":"sfhm4ve","name":"Sean","horario":"15:15","hours":3,"value":63,"pay":"cash"},{"id":"n1v9v83","name":"Morwenna ","horario":"16:20","hours":6,"value":125,"pay":"cash"}],"quinta":[{"id":"y26y9r2","name":"Emma","hours":4,"value":80,"pay":"transfer","horario":"07:50"},{"id":"yw30brp","name":"Ian","hours":3,"value":60,"pay":"cash","horario":"09:20"},{"id":"ctamczr","name":"Anne","hours":4,"value":88,"pay":"transfer","horario":"10:00"},{"id":"rx9g3xh","name":"Lynne","hours":4,"value":84,"pay":"cash","horario":"10:55"},{"id":"3aygizv","name":"David","hours":6,"value":120,"pay":"transfer","horario":"12:15"},{"id":"r2k5dqc","name":"James","hours":4,"value":84,"pay":"cash","horario":"14:00"},{"id":"y3s934o","name":"Arabee","hours":4,"value":84,"pay":"transfer","horario":"15:00"},{"id":"0v8kjxc","name":"Jane","hours":6,"value":120,"pay":"cash","horario":"16:15"}],"sexta":[{"id":"2llihu0","name":"Bernadette","hours":9,"value":180,"pay":"transfer","horario":"08:00"},{"id":"oti6b0m","name":"Pippa","hours":6,"value":132,"pay":"transfer","horario":"10:40"},{"id":"y4t058s","name":"Chris","hours":3,"value":63,"pay":"transfer","horario":"12:50"},{"id":"4hch2t7","name":"Rob","hours":3,"value":63,"pay":"cash","horario":"13:50"},{"id":"3bms3gc","name":"Tim","hours":2,"value":42,"pay":"transfer","horario":"14:40"}]},"semana2":{"segunda":[{"id":"5mu2ue6","name":"Bernadette","hours":10,"value":200,"pay":"transfer"},{"id":"6gs48go","name":"Bushra","hours":4,"value":84,"pay":"transfer"},{"id":"sav4p8k","name":"Jessica","hours":3,"value":63,"pay":"transfer"},{"id":"6w99dxb","name":"Katrina","hours":5,"value":105,"pay":"transfer"},{"id":"f85cwh6","name":"Rachel Nova","hours":3.5,"value":73.5,"pay":"cash"},{"id":"qnah6mn","name":"Rachel Fazendinha","hours":3,"value":63,"pay":"cash"},{"id":"jlmgzmm","name":"Jacqueline","hours":6,"value":120,"pay":"cash"}],"terca":[{"id":"4fxflc5","name":"Rhiannon","hours":4,"value":84,"pay":"cash"},{"id":"raevdha","name":"Sasha","hours":3,"value":63,"pay":"cash"},{"id":"jpl88mq","name":"Phoebe","hours":3,"value":63,"pay":"cash"},{"id":"kdcngah","name":"Rod","hours":3,"value":63,"pay":"transfer"},{"id":"2xwt390","name":"Caroline","hours":2,"value":42,"pay":"cash"},{"id":"wf9c3m2","name":"Carol","hours":3,"value":63,"pay":"transfer"},{"id":"fuho02b","name":"Brent","hours":4,"value":84,"pay":"transfer"},{"id":"2xlpz0d","name":"Vanya","hours":5,"value":100,"pay":"transfer"}],"quarta":[{"id":"4o6hk99","name":"Jo","hours":6,"value":120,"pay":"cash"},{"id":"7soty44","name":"Katie Claverton","hours":8,"value":160,"pay":"transfer"},{"id":"qqcp6wc","name":"Angie","hours":5,"value":105,"pay":"transfer"},{"id":"qqryv20","name":"Sarah","hours":4,"value":84,"pay":"transfer"},{"id":"izq1oqr","name":"Rachel Porquinho","hours":4,"value":84,"pay":"cash"},{"id":"ziztgbp","name":"Lucia","hours":4,"value":84,"pay":"transfer"},{"id":"3kcb0os","name":"Sean","hours":3,"value":63,"pay":"cash"}],"quinta":[{"id":"jq43s2b","name":"Emma","hours":4,"value":80,"pay":"transfer"},{"id":"haxa38u","name":"Ian","hours":3,"value":60,"pay":"cash"},{"id":"29g9kf3","name":"Anne","hours":4,"value":88,"pay":"transfer"},{"id":"qwghstb","name":"Arabee","hours":4,"value":84,"pay":"transfer"},{"id":"5uszchp","name":"Laura","hours":6,"value":120,"pay":"transfer"},{"id":"1cwq8al","name":"Jane","hours":6,"value":120,"pay":"cash"},{"id":"wlluhbl","name":"Susie","hours":3,"value":63,"pay":"cash"},{"id":"1vyd9nb","name":"Julia","hours":6,"value":120,"pay":"transfer"}],"sexta":[{"id":"3udhkef","name":"Bernadette","hours":9,"value":180,"pay":"transfer"},{"id":"861nkju","name":"Pippa","hours":6,"value":132,"pay":"transfer"},{"id":"m5zc9qc","name":"Chris","hours":4,"value":84,"pay":"transfer"},{"id":"47tcbuu","name":"James","hours":4,"value":84,"pay":"cash"},{"id":"kkftp0o","name":"Tim","hours":2,"value":42,"pay":"transfer"},{"id":"hvoqsrm","name":"Rob","hours":3,"value":63,"pay":"cash"}]}},"outros":[{"id":"2rf5sxt","name":"Morwenna","hours":6,"value":125,"pay":"cash"},{"id":"3siw0dv","name":"Valerie","hours":4,"value":80,"pay":"cash"},{"id":"5177ntt","name":"Helen","hours":4,"value":88,"pay":"cash"}]};
-
-    async function seedDatabaseIfEmpty() {
-      const snap = await getDocs(collection(db, "jobs"));
-      if (snap.empty) {
-        for (const sem of ["semana1", "semana2"]) {
-          const days = initialData.weeks[sem];
-          for (const dayKey in days) {
-            for (const item of days[dayKey]) {
-              await addDoc(collection(db, "jobs"), {
-                client: item.name,
-                week: sem,
-                day: dayKey,
-                price: parseFloat(item.value) || 0,
-                payment: item.pay || "cash",
-                duration: parseFloat(item.hours) || 0,
-                horario: item.horario || ""
-              });
-            }
-          }
-        }
-        for (const item of initialData.outros) {
-          await addDoc(collection(db, "jobs"), {
-            client: item.name,
-            week: "outros",
-            day: "geral",
-            price: parseFloat(item.value) || 0,
-            payment: item.pay || "cash",
-            duration: parseFloat(item.hours) || 0,
-            horario: ""
-          });
-        }
-      }
+    if (localStorage.getItem('sm_cleaners_data')) {
+      appData = JSON.parse(localStorage.getItem('sm_cleaners_data'));
+    } else {
+      saveState();
     }
 
-    seedDatabaseIfEmpty();
+    function saveState() {
+      localStorage.setItem('sm_cleaners_data', JSON.stringify(appData));
+    }
 
-    window.switchTab = function(tab) {
+    let currentWeek = 'semana1';
+
+    function switchTab(tab) {
       document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
       document.querySelectorAll('.container > div').forEach(div => div.classList.add('hidden'));
       event.target.classList.add('active');
       document.getElementById('tab-' + tab).classList.remove('hidden');
-    };
+    }
 
-    window.setWeek = function(week) {
+    function setWeek(week) {
       currentWeek = week;
       document.querySelectorAll('.week-btn').forEach(btn => btn.classList.remove('active'));
       document.getElementById('btn-' + (week === 'semana1' ? 'sem1' : week === 'semana2' ? 'sem2' : 'outros')).classList.add('active');
       renderJobs();
       renderFinance();
       renderTeam();
-    };
+    }
 
-    window.toggleForm = function() {
+    function toggleForm() {
       document.getElementById('job-form').classList.toggle('hidden');
-    };
+    }
 
-    window.saveJob = async function() {
+    function saveJob() {
       const id = document.getElementById('job-id').value;
-      const job = {
-        client: document.getElementById('job-client').value,
-        week: document.getElementById('job-week').value,
-        day: document.getElementById('job-day').value,
-        price: parseFloat(document.getElementById('job-price').value) || 0,
-        payment: document.getElementById('job-payment').value,
-        duration: parseFloat(document.getElementById('job-duration').value) || 0,
-        horario: document.getElementById('job-horario').value
-      };
+      const week = document.getElementById('job-week').value;
+      const day = document.getElementById('job-day').value;
+      const client = document.getElementById('job-client').value;
+      const price = parseFloat(document.getElementById('job-price').value) || 0;
+      const payment = document.getElementById('job-payment').value;
+      const duration = parseFloat(document.getElementById('job-duration').value) || 0;
+      const horario = document.getElementById('job-horario').value;
 
-      if(!job.client) return alert('Informe o cliente.');
+      if(!client) return alert('Informe o cliente.');
 
-      if(id) {
-        await updateDoc(doc(db, "jobs", id), job);
-      } else {
-        await addDoc(collection(db, "jobs"), job);
-      }
+      const newJob = { id: id || Date.now().toString(), client, price, payment, duration, horario };
+
+      if(!appData.weeks[week]) appData.weeks[week] = {};
+      if(!appData.weeks[week][day]) appData.weeks[week][day] = [];
+
+      appData.weeks[week][day].push(newJob);
+      saveState();
       toggleForm();
-    };
-
-    window.deleteJob = async function(id) {
-      if(confirm('Excluir este agendamento?')) {
-        await deleteDoc(doc(db, "jobs", id));
-      }
-    };
-
-    onSnapshot(collection(db, "jobs"), (snapshot) => {
-      jobsData = [];
-      snapshot.forEach((doc) => {
-        jobsData.push({ id: doc.id, ...doc.data() });
-      });
       renderJobs();
       renderFinance();
-      renderTeam();
-    });
+    }
+
+    function deleteJob(week, day, id) {
+      if(confirm('Excluir este agendamento?')) {
+        appData.weeks[week][day] = appData.weeks[week][day].filter(j => j.id !== id);
+        saveState();
+        renderJobs();
+        renderFinance();
+      }
+    }
 
     function renderJobs() {
       const container = document.getElementById('jobs-container');
-      const filtered = jobsData.filter(j => j.week === currentWeek);
-      
-      if(filtered.length === 0) {
-        container.innerHTML = '<p style="text-align:center; color:var(--subtext); margin-top:20px;">Carregando agendamentos...</p>';
-        return;
-      }
-
+      const weekData = appData.weeks[currentWeek] || {};
       const daysOrder = ["segunda", "terca", "quarta", "quinta", "sexta", "geral"];
       const dayNames = { segunda: "Segunda-feira", terca: "Terça-feira", quarta: "Quarta-feira", quinta: "Quinta-feira", sexta: "Sexta-feira", geral: "Lista Geral" };
 
       let html = '';
       daysOrder.forEach(day => {
-        const dayJobs = filtered.filter(j => j.day === day);
+        const dayJobs = weekData[day] || [];
         if(dayJobs.length > 0) {
           html += `<div class="day-header">${dayNames[day]}</div>`;
           dayJobs.forEach(j => {
@@ -322,24 +437,28 @@
                 </div>
                 <div>
                   <span class="badge ${j.payment.toLowerCase() === 'cash' ? 'badge-cash' : 'badge-transfer'}">${j.payment.toUpperCase()}</span>
-                  <button style="background:none; border:none; color:var(--danger); margin-left:8px; font-weight:bold; cursor:pointer;" onclick="deleteJob('${j.id}')">✕</button>
+                  <button style="background:none; border:none; color:var(--danger); margin-left:8px; font-weight:bold; cursor:pointer;" onclick="deleteJob('${currentWeek}', '${day}', '${j.id}')">✕</button>
                 </div>
               </div>
             `;
           });
         }
       });
-      container.innerHTML = html;
+      container.innerHTML = html || '<p style="text-align:center; color:var(--subtext); margin-top:20px;">Nenhum agendamento cadastrado.</p>';
     }
 
     function renderFinance() {
-      const filtered = jobsData.filter(j => j.week === currentWeek);
+      const weekData = appData.weeks[currentWeek] || {};
       let total = 0, cash = 0, transfer = 0;
-      filtered.forEach(j => {
-        total += j.price;
-        if(j.payment.toLowerCase() === 'cash') cash += j.price;
-        else transfer += j.price;
+
+      Object.keys(weekData).forEach(day => {
+        weekData[day].forEach(j => {
+          total += j.price;
+          if(j.payment.toLowerCase() === 'cash') cash += j.price;
+          else transfer += j.price;
+        });
       });
+
       document.getElementById('total-revenue').innerText = `£${total.toFixed(2)}`;
       document.getElementById('total-cash').innerText = `£${cash.toFixed(2)}`;
       document.getElementById('total-transfer').innerText = `£${transfer.toFixed(2)}`;
@@ -381,39 +500,74 @@
     }
 
     // VISITAS
-    window.toggleVisitForm = function() {
+    function toggleVisitForm() {
       document.getElementById('visit-form').classList.toggle('hidden');
-    };
+    }
 
-    window.saveVisit = async function() {
+    function saveVisit() {
       const client = document.getElementById('visit-client').value;
       const contact = document.getElementById('visit-contact').value;
+      const bedrooms = document.getElementById('visit-bedrooms').value;
+      const bathrooms = document.getElementById('visit-bathrooms').value;
+      const livingrooms = document.getElementById('visit-livingrooms').value;
+      const pets = document.getElementById('visit-pets').value;
+      const kids = document.getElementById('visit-kids').value;
+      const price = document.getElementById('visit-price').value;
+      const freq = document.getElementById('visit-freq').value;
       const notes = document.getElementById('visit-notes').value;
 
       if(!client) return alert('Informe o nome do cliente.');
 
-      await addDoc(collection(db, "visits"), { client, contact, notes });
-      document.getElementById('visit-client').value = '';
-      document.getElementById('visit-contact').value = '';
-      document.getElementById('visit-notes').value = '';
-      toggleVisitForm();
-    };
+      appData.visits.push({
+        id: Date.now().toString(),
+        client, contact, bedrooms, bathrooms, livingrooms, pets, kids, price, freq, notes
+      });
 
-    onSnapshot(collection(db, "visits"), (snapshot) => {
+      saveState();
+      toggleVisitForm();
+      renderVisits();
+    }
+
+    function deleteVisit(id) {
+      if(confirm('Excluir esta visita?')) {
+        appData.visits = appData.visits.filter(v => v.id !== id);
+        saveState();
+        renderVisits();
+      }
+    }
+
+    function renderVisits() {
       const visitsList = document.getElementById('visits-list');
       let html = '';
-      snapshot.forEach(docSnap => {
-        const v = docSnap.data();
+      appData.visits.forEach(v => {
         html += `
           <div class="card">
-            <div class="card-title">${v.client}</div>
-            <div style="font-size:0.85rem; color:var(--subtext); margin:5px 0;">📍 ${v.contact}</div>
-            <div style="font-size:0.9rem; color:var(--text);">${v.notes}</div>
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <div class="card-title">${v.client}</div>
+              <button style="background:none; border:none; color:var(--danger); font-weight:bold; cursor:pointer;" onclick="deleteVisit('${v.id}')">✕</button>
+            </div>
+            <div style="font-size:0.85rem; color:var(--subtext); margin:5px 0;">📍 ${v.contact || 'Sem endereço'}</div>
+            <div style="font-size:0.85rem; color:var(--accent); margin-bottom:8px;">
+              🛏️ ${v.bedrooms} quart(s) | 🚿 ${v.bathrooms} banh(s) | 🛋️ ${v.livingrooms} sala(s)
+            </div>
+            <div style="font-size:0.85rem; color:var(--subtext); margin-bottom:8px;">
+              🐾 Pets: ${v.pets} | 👶 Crianças: ${v.kids}
+            </div>
+            <div style="font-size:0.9rem; font-weight:bold; color:var(--success); margin-bottom:5px;">
+              £${v.price || 0} (${v.freq})
+            </div>
+            ${v.notes ? `<div style="font-size:0.85rem; color:var(--subtext); font-style:italic;">"${v.notes}"</div>` : ''}
           </div>
         `;
       });
       visitsList.innerHTML = html || '<p style="text-align:center; color:var(--subtext);">Nenhuma visita registrada.</p>';
-    });
+    }
+
+    // Inicialização
+    renderJobs();
+    renderFinance();
+    renderTeam();
+    renderVisits();
   </script>
 </body>
 </html>
