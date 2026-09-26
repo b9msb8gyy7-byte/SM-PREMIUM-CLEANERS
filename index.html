@@ -51,10 +51,14 @@
     .btn-icon { border: 1px solid var(--border-color); background: #1e293b; cursor: pointer; font-size: 11px; color: var(--text-muted); width: 28px; height: 28px; border-radius: 6px; display: flex; align-items: center; justify-content: center; }
 
     .card-body { font-size: 13px; color: var(--text-muted); display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 6px; }
-    .badge { display: inline-block; padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; color: white; text-transform: uppercase; }
+    .card-input-inline { width: 55px; background: #1e293b; border: 1px solid var(--border-color); color: #fff; padding: 4px 6px; border-radius: 4px; font-size: 12px; font-weight: 600; text-align: center; }
+    
+    .badge { display: inline-block; padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; color: white; text-transform: uppercase; cursor: pointer; }
     .badge-transfer { background-color: var(--tag-transfer); }
     .badge-cash { background-color: var(--tag-cash); }
     .badge-mensal { background-color: var(--tag-mensal); }
+
+    .time-per-person { font-size: 11px; color: var(--primary); margin-top: 4px; font-style: italic; }
 
     .workers-section { margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--border-color); font-size: 12px; }
     .workers-list { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
@@ -66,6 +70,25 @@
     .team-table th { background: #0f172a; color: var(--primary); }
 
     .section-box { background: #1e293b; border: 1px solid var(--border-color); border-radius: 12px; padding: 16px; margin-bottom: 16px; }
+
+    /* VISITAS */
+    .form-group { margin-bottom: 14px; }
+    .form-label { font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-bottom: 4px; display: block; letter-spacing: 0.5px; }
+    .form-input, .form-textarea { width: 100%; padding: 10px; background: #0f172a; border: 1px solid var(--border-color); border-radius: 6px; color: #fff; font-size: 14px; }
+    .form-row { display: flex; gap: 12px; margin-bottom: 14px; }
+    .form-col { flex: 1; }
+
+    .toggle-group { display: flex; border: 1px solid var(--border-color); border-radius: 6px; overflow: hidden; }
+    .toggle-btn { flex: 1; padding: 8px; background: #0f172a; color: var(--text-muted); border: none; cursor: pointer; font-weight: 600; font-size: 13px; text-align: center; }
+    .toggle-btn.active { background: #1e3a5f; color: #38bdf8; font-weight: 700; }
+
+    .counter-box { display: flex; align-items: center; justify-content: space-between; background: #0f172a; border: 1px solid var(--border-color); border-radius: 6px; padding: 4px 8px; }
+    .counter-btn { width: 28px; height: 28px; background: #1e293b; border: 1px solid var(--border-color); color: #fff; font-size: 16px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+
+    .bathroom-row { display: flex; align-items: center; justify-content: space-between; background: #0f172a; border: 1px solid var(--border-color); padding: 8px 12px; border-radius: 6px; margin-bottom: 8px; }
+    .btn-add-sub { width: 100%; padding: 8px; background: transparent; border: 1px dashed var(--border-color); color: var(--primary); border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 600; }
+
+    .calc-row { display: flex; align-items: center; gap: 10px; background: #0f172a; padding: 12px; border-radius: 6px; border: 1px solid var(--border-color); margin-top: 10px; }
   </style>
 </head>
 <body>
@@ -116,9 +139,115 @@
 
   <!-- ABA VISITAS -->
   <div id="tab-visitas" style="display:none;">
+    <div class="section-box" style="position: relative;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <h3 style="color: var(--primary); font-size: 18px;">Nova Visita</h3>
+        <button onclick="clearVisitForm()" style="background:none; border:none; color:#ef4444; font-size:12px; cursor:pointer; font-weight:600;">remover / limpar</button>
+      </div>
+
+      <div class="form-row">
+        <div class="form-col">
+          <label class="form-label">NOME</label>
+          <input type="text" id="v-nome" class="form-input" placeholder="Nome do cliente">
+        </div>
+        <div class="form-col">
+          <label class="form-label">ENDEREÇO</label>
+          <input type="text" id="v-endereco" class="form-input" placeholder="Endereço">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">PRIORIDADES</label>
+        <textarea id="v-prioridades" class="form-textarea" rows="2" placeholder="O que o cliente pediu pra priorizar..."></textarea>
+      </div>
+
+      <div class="form-row">
+        <div class="form-col">
+          <label class="form-label">TEM PET?</label>
+          <div class="toggle-group">
+            <button id="btn-pet-sim" class="toggle-btn" onclick="setPet(true)">Sim</button>
+            <button id="btn-pet-nao" class="toggle-btn active" onclick="setPet(false)">Não</button>
+          </div>
+        </div>
+        <div class="form-col">
+          <label class="form-label">TEM CRIANÇAS?</label>
+          <div class="toggle-group">
+            <button id="btn-criancas-sim" class="toggle-btn" onclick="setCriancas(true)">Sim</button>
+            <button id="btn-criancas-nao" class="toggle-btn active" onclick="setCriancas(false)">Não</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-col">
+          <label class="form-label">QUARTOS</label>
+          <div class="counter-box">
+            <button class="counter-btn" onclick="updateCounter('quartos', -1)">-</button>
+            <span id="cnt-quartos" style="font-weight: bold;">0</span>
+            <button class="counter-btn" onclick="updateCounter('quartos', 1)">+</button>
+          </div>
+        </div>
+        <div class="form-col">
+          <label class="form-label">LAVABO</label>
+          <div class="counter-box">
+            <button class="counter-btn" onclick="updateCounter('lavabo', -1)">-</button>
+            <span id="cnt-lavabo" style="font-weight: bold;">0</span>
+            <button class="counter-btn" onclick="updateCounter('lavabo', 1)">+</button>
+          </div>
+        </div>
+        <div class="form-col">
+          <label class="form-label">SALAS</label>
+          <div class="counter-box">
+            <button class="counter-btn" onclick="updateCounter('salas', -1)">-</button>
+            <span id="cnt-salas" style="font-weight: bold;">0</span>
+            <button class="counter-btn" onclick="updateCounter('salas', 1)">+</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">BANHEIROS (MÁX. 5)</label>
+        <div id="bathrooms-container"></div>
+        <button class="btn-add-sub" onclick="addBathroom()">+ adicionar banheiro</button>
+      </div>
+
+      <div class="form-group" style="margin-top: 14px;">
+        <label class="form-label">PISO</label>
+        <div class="toggle-group" id="piso-toggle">
+          <button class="toggle-btn active" onclick="setPiso('Piso', this)">Piso</button>
+          <button class="toggle-btn" onclick="setPiso('Carpet', this)">Carpet</button>
+          <button class="toggle-btn" onclick="setPiso('Madeira', this)">Madeira</button>
+          <button class="toggle-btn" onclick="setPiso('Misto', this)">Misto</button>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-col">
+          <label class="form-label">TEMPO ESTIMADO (1ª LIMPEZA)</label>
+          <input type="text" id="v-tempo-1" class="form-input" placeholder="ex: 5h">
+        </div>
+        <div class="form-col">
+          <label class="form-label">TEMPO COMBINADO (RECORRENTE)</label>
+          <input type="number" id="v-tempo-comb" class="form-input" placeholder="ex: 3" oninput="calculateVisitTotal()">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">VALOR POR HORA × TOTAL (LIGADOS)</label>
+        <div class="calc-row">
+          <input type="number" id="v-rate" class="form-input" style="width: 80px;" placeholder="£/HORA" oninput="calculateVisitTotal()">
+          <span style="color:var(--text-muted);">× <span id="lbl-horas-comb">0</span> =</span>
+          <strong style="font-size: 18px; color: var(--primary);" id="lbl-total-visita">£0.00</strong>
+        </div>
+      </div>
+
+      <button class="btn btn-primary" onclick="saveVisit()" style="margin-top: 15px;">Salvar Visita</button>
+    </div>
+
+    <!-- LISTA DE VISITAS SALVAS -->
     <div class="section-box">
-      <h3 style="color: var(--primary); margin-bottom: 12px;">Visitas Agendadas</h3>
-      <p style="color: var(--text-muted); font-size: 14px;">Nenhuma visita pendente no momento.</p>
+      <h3 style="color: var(--primary); margin-bottom: 12px;">Visitas Guardadas</h3>
+      <div id="saved-visits-list"></div>
     </div>
   </div>
 
@@ -135,12 +264,11 @@
     <div class="section-box">
       <h3 style="color: var(--primary); margin-bottom: 12px;">Gerenciamento de Dados</h3>
       <button class="btn" onclick="exportJSON()" style="margin-right: 10px;">Exportar Dados (JSON)</button>
-      <button class="btn" onclick="resetToInitialData()" style="background: #ef4444; border:none;">Restaurar Lista Atualizada</button>
+      <button class="btn" onclick="resetToInitialData()" style="background: #ef4444; border:none;">Restaurar Lista Inicial</button>
     </div>
   </div>
 
   <script>
-    // Lista exata fornecida
     const exactListData = {
       selectedWeekKey: "semana1",
       teamMembers: [
@@ -148,11 +276,12 @@
         { name: "Lorruama", rate: 12.21 },
         { name: "Victor Hugo", rate: 12.21 }
       ],
+      visits: [],
       weeks: {
         semana1: {
           segunda: [
-            { id: "s1_seg_1", name: "Bernadette", hours: 10, value: 200, pay: "transfer", mensal: true, workers: [] },
-            { id: "s1_seg_2", name: "Bushra", hours: 4, value: 84, pay: "transfer", mensal: true, workers: [] },
+            { id: "s1_seg_1", name: "Bernadette", hours: 10, value: 200, pay: "transfer", mensal: true, workers: ["Roberta", "Lorruama"] },
+            { id: "s1_seg_2", name: "Bushra", hours: 4, value: 84, pay: "transfer", mensal: true, workers: ["Roberta", "Lorruama"] },
             { id: "s1_seg_3", name: "Jessica", hours: 3, value: 63, pay: "transfer", mensal: false, workers: [] },
             { id: "s1_seg_4", name: "Katrina", hours: 5, value: 105, pay: "transfer", mensal: false, workers: [] },
             { id: "s1_seg_5", name: "Rachel Nova", hours: 3.5, value: 73.5, pay: "cash", mensal: false, workers: [] },
@@ -161,7 +290,7 @@
           ],
           terca: [
             { id: "s1_ter_1", name: "Rhiannon", hours: 4, value: 84, pay: "cash", mensal: false, workers: [] },
-            { id: "s1_ter_2", name: "Sasha", hours: 3, value: 63, pay: "cash", mensal: false, workers: [] },
+            { id: "s1_ter_2", name: "Sasha", hours: 3, value: 63, pay: "cash", mensal: false, workers: ["Victor Hugo"] },
             { id: "s1_ter_3", name: "Phoebe", hours: 3, value: 63, pay: "cash", mensal: false, workers: [] },
             { id: "s1_ter_4", name: "Georgie", hours: 4, value: 84, pay: "transfer", mensal: false, workers: [] },
             { id: "s1_ter_5", name: "Rod", hours: 3, value: 63, pay: "transfer", mensal: false, workers: [] },
@@ -255,10 +384,12 @@
       }
     };
 
-    let appData = JSON.parse(localStorage.getItem('sm_cleaners_v14')) || exactListData;
+    let appData = JSON.parse(localStorage.getItem('sm_cleaners_v16')) || exactListData;
+
+    let visitForm = { pet: false, criancas: false, quartos: 0, lavabo: 0, salas: 0, bathrooms: [{ type: 'Shower' }], piso: 'Piso' };
 
     function saveData() {
-      localStorage.setItem('sm_cleaners_v14', JSON.stringify(appData));
+      localStorage.setItem('sm_cleaners_v16', JSON.stringify(appData));
     }
 
     function selectWeek(weekKey) {
@@ -296,6 +427,13 @@
         `;
 
         clients.forEach((client, idx) => {
+          let numWorkers = (client.workers || []).length;
+          let timePerPersonText = "";
+          if (numWorkers > 0) {
+            let hoursPerPerson = (parseFloat(client.hours) || 0) / numWorkers;
+            timePerPersonText = `➔ ${hoursPerPerson.toFixed(2)}h por pessoa (${numWorkers} ${numWorkers === 1 ? 'pessoa' : 'pessoas'})`;
+          }
+
           dayHtml += `
             <div class="card">
               <div class="card-header">
@@ -307,12 +445,18 @@
                 </div>
               </div>
               <div class="card-body">
-                <div>⏱️ ${client.hours}h | £${client.value}</div>
                 <div>
-                  <span class="badge badge-${client.pay || 'cash'}">${client.pay || 'CASH'}</span>
-                  ${client.mensal ? '<span class="badge badge-mensal">MENSAL</span>' : ''}
+                  ⏱️ <input type="number" class="card-input-inline" value="${client.hours}" onchange="updateClientField('${day}', ${idx}, 'hours', this.value)"> h | 
+                  £ <input type="number" class="card-input-inline" value="${client.value}" onchange="updateClientField('${day}', ${idx}, 'value', this.value)">
+                </div>
+                <div>
+                  <span class="badge badge-${client.pay || 'cash'}" onclick="togglePayType('${day}', ${idx})">${client.pay || 'CASH'}</span>
+                  <span class="badge ${client.mensal ? 'badge-mensal' : ''}" style="${!client.mensal ? 'background:#334155; color:#94a3b8;' : ''}" onclick="toggleMensal('${day}', ${idx})">MENSAL</span>
                 </div>
               </div>
+
+              ${timePerPersonText ? `<div class="time-per-person">${timePerPersonText}</div>` : ''}
+
               <div class="workers-section">
                 <span style="color:var(--text-muted);">Trabalhou nesta casa:</span>
                 <div class="workers-list">
@@ -329,6 +473,29 @@
         dayHtml += `</div>`;
         container.innerHTML += dayHtml;
       });
+    }
+
+    function updateClientField(day, idx, field, val) {
+      appData.weeks[appData.selectedWeekKey][day][idx][field] = parseFloat(val) || 0;
+      saveData();
+      renderAgenda();
+      renderTeamSummary();
+      renderFinancialSummary();
+    }
+
+    function togglePayType(day, idx) {
+      let current = appData.weeks[appData.selectedWeekKey][day][idx].pay || 'cash';
+      appData.weeks[appData.selectedWeekKey][day][idx].pay = (current === 'cash') ? 'transfer' : 'cash';
+      saveData();
+      renderAgenda();
+      renderFinancialSummary();
+    }
+
+    function toggleMensal(day, idx) {
+      let current = appData.weeks[appData.selectedWeekKey][day][idx].mensal;
+      appData.weeks[appData.selectedWeekKey][day][idx].mensal = !current;
+      saveData();
+      renderAgenda();
     }
 
     function moveClient(day, index, direction) {
@@ -448,6 +615,152 @@
       `;
     }
 
+    /* VISITAS */
+    function setPet(val) {
+      visitForm.pet = val;
+      document.getElementById('btn-pet-sim').className = val ? 'toggle-btn active' : 'toggle-btn';
+      document.getElementById('btn-pet-nao').className = !val ? 'toggle-btn active' : 'toggle-btn';
+    }
+
+    function setCriancas(val) {
+      visitForm.criancas = val;
+      document.getElementById('btn-criancas-sim').className = val ? 'toggle-btn active' : 'toggle-btn';
+      document.getElementById('btn-criancas-nao').className = !val ? 'toggle-btn active' : 'toggle-btn';
+    }
+
+    function updateCounter(key, val) {
+      visitForm[key] = Math.max(0, visitForm[key] + val);
+      document.getElementById(`cnt-${key}`).innerText = visitForm[key];
+    }
+
+    function setPiso(val, btn) {
+      visitForm.piso = val;
+      document.querySelectorAll('#piso-toggle button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    }
+
+    function renderBathrooms() {
+      const container = document.getElementById('bathrooms-container');
+      container.innerHTML = '';
+      visitForm.bathrooms.forEach((b, idx) => {
+        container.innerHTML += `
+          <div class="bathroom-row">
+            <span style="font-size:13px; font-weight:600;">Banheiro ${idx + 1}</span>
+            <div class="toggle-group" style="width: 180px;">
+              <button class="toggle-btn ${b.type === 'Shower' ? 'active' : ''}" onclick="setBathType(${idx}, 'Shower')">Shower</button>
+              <button class="toggle-btn ${b.type === 'Bath' ? 'active' : ''}" onclick="setBathType(${idx}, 'Bath')">Bath</button>
+            </div>
+            <button onclick="removeBathroom(${idx})" style="background:none; border:none; color:var(--text-muted); cursor:pointer; font-weight:bold;">✕</button>
+          </div>
+        `;
+      });
+    }
+
+    function addBathroom() {
+      if (visitForm.bathrooms.length < 5) {
+        visitForm.bathrooms.push({ type: 'Shower' });
+        renderBathrooms();
+      }
+    }
+
+    function removeBathroom(idx) {
+      visitForm.bathrooms.splice(idx, 1);
+      renderBathrooms();
+    }
+
+    function setBathType(idx, type) {
+      visitForm.bathrooms[idx].type = type;
+      renderBathrooms();
+    }
+
+    function calculateVisitTotal() {
+      const hrs = parseFloat(document.getElementById('v-tempo-comb').value) || 0;
+      const rate = parseFloat(document.getElementById('v-rate').value) || 0;
+      document.getElementById('lbl-horas-comb').innerText = hrs;
+      document.getElementById('lbl-total-visita').innerText = `£${(hrs * rate).toFixed(2)}`;
+    }
+
+    function clearVisitForm() {
+      document.getElementById('v-nome').value = '';
+      document.getElementById('v-endereco').value = '';
+      document.getElementById('v-prioridades').value = '';
+      document.getElementById('v-tempo-1').value = '';
+      document.getElementById('v-tempo-comb').value = '';
+      document.getElementById('v-rate').value = '';
+      visitForm = { pet: false, criancas: false, quartos: 0, lavabo: 0, salas: 0, bathrooms: [{ type: 'Shower' }], piso: 'Piso' };
+      setPet(false); setCriancas(false);
+      document.getElementById('cnt-quartos').innerText = 0;
+      document.getElementById('cnt-lavabo').innerText = 0;
+      document.getElementById('cnt-salas').innerText = 0;
+      renderBathrooms();
+      calculateVisitTotal();
+    }
+
+    function saveVisit() {
+      const nome = document.getElementById('v-nome').value;
+      if (!nome) { alert("Por favor, digite o nome do cliente."); return; }
+
+      const newVisit = {
+        id: Math.random().toString(36).substr(2, 7),
+        nome: nome,
+        endereco: document.getElementById('v-endereco').value,
+        prioridades: document.getElementById('v-prioridades').value,
+        pet: visitForm.pet,
+        criancas: visitForm.criancas,
+        quartos: visitForm.quartos,
+        lavabo: visitForm.lavabo,
+        salas: visitForm.salas,
+        bathrooms: visitForm.bathrooms,
+        piso: visitForm.piso,
+        tempo1: document.getElementById('v-tempo-1').value,
+        tempoComb: document.getElementById('v-tempo-comb').value,
+        rate: document.getElementById('v-rate').value,
+        total: (parseFloat(document.getElementById('v-tempo-comb').value) || 0) * (parseFloat(document.getElementById('v-rate').value) || 0)
+      };
+
+      if (!appData.visits) appData.visits = [];
+      appData.visits.push(newVisit);
+      saveData();
+      renderSavedVisits();
+      clearVisitForm();
+      alert("Visita salva com sucesso!");
+    }
+
+    function renderSavedVisits() {
+      const container = document.getElementById('saved-visits-list');
+      container.innerHTML = '';
+      if (!appData.visits || appData.visits.length === 0) {
+        container.innerHTML = `<p style="color:var(--text-muted); font-size:13px;">Nenhuma visita guardada.</p>`;
+        return;
+      }
+
+      appData.visits.forEach((v, idx) => {
+        container.innerHTML += `
+          <div class="card" style="margin-bottom:12px;">
+            <div class="card-header">
+              <span class="client-name">${v.nome}</span>
+              <button onclick="deleteVisit(${idx})" style="background:none; border:none; color:#ef4444; font-size:12px; cursor:pointer; font-weight:600;">Remover</button>
+            </div>
+            <div style="font-size:13px; color:var(--text-muted); line-height:1.6;">
+              <p>📍 <strong>Endereço:</strong> ${v.endereco || 'N/A'}</p>
+              <p>📌 <strong>Prioridades:</strong> ${v.prioridades || 'N/A'}</p>
+              <p>🐾 Pet: ${v.pet ? 'Sim' : 'Não'} | 👶 Crianças: ${v.criancas ? 'Sim' : 'Não'}</p>
+              <p>🛏️ Quartos: ${v.quartos} | 🚪 Lavabo: ${v.lavabo} | 🛋️ Salas: ${v.salas} | 🚿 Banheiros: ${v.bathrooms.length}</p>
+              <p>🪵 Piso: ${v.piso} | ⏱️ Combinado: ${v.tempoComb}h | 💰 Total: £${v.total.toFixed(2)}</p>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    function deleteVisit(idx) {
+      if (confirm("Remover esta visita guardada?")) {
+        appData.visits.splice(idx, 1);
+        saveData();
+        renderSavedVisits();
+      }
+    }
+
     function switchTab(tab) {
       ['agenda', 'equipe', 'visitas', 'financeiro', 'backup'].forEach(t => {
         const el = document.getElementById(`tab-${t}`);
@@ -469,17 +782,20 @@
     }
 
     function resetToInitialData() {
-      if (confirm("Tem certeza que deseja restaurar com a lista completa atualizada?")) {
+      if (confirm("Tem certeza que deseja restaurar com a lista completa inicial?")) {
         appData = exactListData;
         saveData();
         renderAgenda();
         renderTeamSummary();
         renderFinancialSummary();
+        renderSavedVisits();
       }
     }
 
     // Inicializar
     selectWeek(appData.selectedWeekKey || 'semana1');
+    renderBathrooms();
+    renderSavedVisits();
   </script>
 </body>
 </html>
