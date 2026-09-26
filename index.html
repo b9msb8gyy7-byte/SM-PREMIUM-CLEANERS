@@ -282,9 +282,8 @@
     const firebaseConfig = {
       apiKey: "AIzaSyCgqJMnBcwCI4eEEOS3wxa3uFrmcXMN9dA",
       authDomain: "cleaningapp-f7e58.firebaseapp.com",
-      databaseURL: "https://cleaningapp-f7e58-default-rtdb.europe-west1.firebasedatabase.app",
       projectId: "cleaningapp-f7e58",
-      storageBucket: "cleaningapp-f7e58.firebasestorage.app",
+      storageBucket: "cleaningapp-f7e58.appspot.com",
       messagingSenderId: "499257274532",
       appId: "1:499257274532:web:4dea74fe36d6258d793631"
     };
@@ -420,7 +419,6 @@
         appData = val;
         document.getElementById('sync-status').innerText = '🟢 Conectado em Tempo Real (Firebase)';
       } else {
-        // Se a base de dados estiver vazia, grava a lista inicial
         saveData();
       }
       renderAgenda();
@@ -905,7 +903,6 @@
       }
     }
 
-    // Inicializar formulários locais
     renderBathrooms();
   </script>
 </body>
