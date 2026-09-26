@@ -2,60 +2,64 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SM Premium Cleaners</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="SM Cleaners">
-  <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/995/995053.png">
   <style>
     :root {
-      --bg: #0f172a;
-      --card: #1e293b;
-      --accent: #38bdf8;
-      --text: #f8fafc;
-      --subtext: #94a3b8;
-      --success: #22c55e;
-      --warning: #f59e0b;
-      --danger: #ef4444;
+      --bg-color: #0f172a;
+      --card-bg: #1e293b;
+      --border-color: #334155;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --primary: #38bdf8;
+      --accent: #f59e0b;
+      --tag-transfer: #0284c7;
+      --tag-cash: #b45309;
+      --tag-mensal: #9333ea;
     }
+
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-    body { background-color: var(--bg); color: var(--text); padding-bottom: 80px; }
-    header { background: var(--card); padding: 15px 20px; text-align: center; border-bottom: 1px solid #334155; position: sticky; top: 0; z-index: 10; }
-    header h1 { font-size: 1.2rem; color: var(--accent); }
+    body { background-color: var(--bg-color); color: var(--text-main); padding: 16px; padding-bottom: 40px; }
     
-    .nav-tabs { display: flex; background: var(--card); border-bottom: 1px solid #334155; position: sticky; top: 51px; z-index: 10; overflow-x: auto; }
-    .tab-btn { flex: 1; padding: 12px 10px; text-align: center; background: none; border: none; color: var(--subtext); font-weight: bold; cursor: pointer; border-bottom: 2px solid transparent; white-space: nowrap; font-size: 0.85rem; }
-    .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
-    
-    .week-selector { display: flex; gap: 10px; margin-bottom: 15px; }
-    .week-btn { flex: 1; padding: 8px; background: #0f172a; border: 1px solid #334155; color: var(--subtext); border-radius: 6px; font-weight: bold; cursor: pointer; }
-    .week-btn.active { background: var(--accent); color: #0f172a; border-color: var(--accent); }
+    header { text-align: center; margin-bottom: 16px; }
+    h1 { font-size: 22px; font-weight: 700; color: var(--primary); }
 
-    .container { padding: 15px; }
-    .card { background: var(--card); border-radius: 12px; padding: 15px; margin-bottom: 15px; border: 1px solid #334155; }
-    .day-header { font-size: 1rem; font-weight: bold; color: var(--accent); margin: 15px 0 10px 0; border-bottom: 1px solid #334155; padding-bottom: 5px; }
-    
-    .job-item { background: #0f172a; border-radius: 8px; padding: 10px; margin-bottom: 8px; border: 1px solid #334155; display: flex; justify-content: space-between; align-items: center; }
-    .job-info { flex: 1; }
-    .job-title { font-weight: bold; color: var(--text); font-size: 0.95rem; }
-    .job-sub { font-size: 0.8rem; color: var(--subtext); margin-top: 2px; }
-    
-    .badge { padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: bold; }
-    .badge-cash { background: rgba(245, 158, 11, 0.2); color: var(--warning); }
-    .badge-transfer { background: rgba(56, 189, 248, 0.2); color: var(--accent); }
+    nav.tabs { display: flex; justify-content: space-around; background: #1e293b; padding: 6px; border-radius: 10px; margin-bottom: 16px; border: 1px solid var(--border-color); }
+    nav.tabs button { flex: 1; padding: 10px; border: none; background: transparent; cursor: pointer; font-weight: 600; font-size: 14px; color: var(--text-muted); border-radius: 8px; transition: all 0.2s; }
+    nav.tabs button.active { color: #fff; background: var(--primary); }
 
-    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
-    .stat-box { background: #0f172a; padding: 12px; border-radius: 8px; text-align: center; }
-    .stat-val { font-size: 1.1rem; font-weight: bold; margin-top: 5px; }
-    
-    .btn { width: 100%; padding: 10px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; }
-    .btn-primary { background: var(--accent); color: #0f172a; }
-    .btn-danger { background: var(--danger); color: white; margin-top: 5px; }
-    input, select, textarea { width: 100%; padding: 10px; margin-top: 5px; margin-bottom: 10px; border-radius: 6px; border: 1px solid #334155; background: #0f172a; color: white; }
-    label { font-size: 0.85rem; color: var(--subtext); }
-    .hidden { display: none; }
+    .week-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; background: #1e293b; padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border-color); }
+    .btn { padding: 8px 14px; border-radius: 8px; border: 1px solid var(--border-color); background: #334155; cursor: pointer; font-size: 13px; color: #fff; font-weight: 600; }
+    .btn-primary { background: var(--primary); color: #0f172a; border: none; width: 100%; margin-bottom: 16px; padding: 12px; font-size: 15px; }
+
+    .days-grid { display: flex; flex-direction: column; gap: 16px; }
+    .day-column { background: #1e293b; border: 1px solid var(--border-color); border-radius: 12px; padding: 14px; }
+    .day-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border-color); }
+    .day-title { font-weight: 700; font-size: 16px; color: var(--primary); }
+    .day-stats { font-size: 13px; color: var(--text-muted); font-weight: 600; }
+
+    .card { background: #0f172a; border: 1px solid var(--border-color); border-radius: 10px; padding: 12px; margin-bottom: 10px; }
+    .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+    .client-name { font-weight: 700; font-size: 16px; color: #fff; }
+    .actions { display: flex; gap: 6px; }
+    .btn-icon { border: 1px solid var(--border-color); background: #1e293b; cursor: pointer; font-size: 12px; color: var(--text-muted); width: 28px; height: 28px; border-radius: 6px; display: flex; align-items: center; justify-content: center; }
+
+    .card-body { font-size: 13px; color: var(--text-muted); display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+    .badge { display: inline-block; padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; color: white; text-transform: uppercase; }
+    .badge-transfer { background-color: var(--tag-transfer); }
+    .badge-cash { background-color: var(--tag-cash); }
+    .badge-mensal { background-color: var(--tag-mensal); }
+
+    .workers-section { margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--border-color); font-size: 12px; }
+    .workers-list { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+    .worker-chip { background: #334155; color: #cbd5e1; padding: 4px 8px; border-radius: 6px; font-size: 11px; cursor: pointer; font-weight: 600; }
+    .worker-chip.selected { background: var(--primary); color: #0f172a; }
+
+    .team-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    .team-table th, .team-table td { padding: 10px; border: 1px solid var(--border-color); text-align: left; font-size: 13px; }
+    .team-table th { background: #0f172a; color: var(--primary); }
   </style>
 </head>
 <body>
@@ -64,510 +68,252 @@
     <h1>SM Premium Cleaners</h1>
   </header>
 
-  <div class="nav-tabs">
-    <button class="tab-btn active" onclick="switchTab('agenda')">Agenda</button>
-    <button class="tab-btn" onclick="switchTab('financeiro')">Financeiro</button>
-    <button class="tab-btn" onclick="switchTab('equipe')">Equipe</button>
-    <button class="tab-btn" onclick="switchTab('visitas')">Visitas</button>
+  <nav class="tabs">
+    <button class="active" onclick="switchTab('agenda')">Agenda</button>
+    <button onclick="switchTab('equipe')">Equipe</button>
+    <button onclick="switchTab('visitas')">Visitas</button>
+    <button onclick="switchTab('financeiro')">Financeiro</button>
+  </nav>
+
+  <!-- ABA AGENDA -->
+  <div id="tab-agenda">
+    <div class="week-bar">
+      <button class="btn" onclick="changeWeek(-1)">◄</button>
+      <strong id="week-label" style="font-size: 15px;">Semana 1</strong>
+      <button class="btn" onclick="changeWeek(1)">►</button>
+    </div>
+
+    <button class="btn btn-primary" onclick="addNewClient()">+ Novo Agendamento</button>
+
+    <div class="days-grid" id="days-container"></div>
   </div>
 
-  <div class="container">
-    <!-- ABA AGENDA -->
-    <div id="tab-agenda">
-      <div class="week-selector">
-        <button class="week-btn active" id="btn-sem1" onclick="setWeek('semana1')">Semana 1</button>
-        <button class="week-btn" id="btn-sem2" onclick="setWeek('semana2')">Semana 2</button>
-        <button class="week-btn" id="btn-outros" onclick="setWeek('outros')">Outros/Mensal</button>
-      </div>
-
-      <button class="btn btn-primary" style="margin-bottom: 15px;" onclick="toggleForm()">+ Novo Agendamento</button>
-      
-      <div id="job-form" class="card hidden">
-        <h3 style="margin-bottom:10px;">Agendamento</h3>
-        <input type="hidden" id="job-id">
-        <label>Cliente</label>
-        <input type="text" id="job-client">
-        
-        <label>Semana</label>
-        <select id="job-week">
-          <option value="semana1">Semana 1</option>
-          <option value="semana2">Semana 2</option>
-          <option value="outros">Outros / Mensal</option>
-        </select>
-
-        <label>Dia da Semana</label>
-        <select id="job-day">
-          <option value="segunda">Segunda-feira</option>
-          <option value="terca">Terça-feira</option>
-          <option value="quarta">Quarta-feira</option>
-          <option value="quinta">Quinta-feira</option>
-          <option value="sexta">Sexta-feira</option>
-        </select>
-
-        <div class="grid-2">
-          <div>
-            <label>Valor (£)</label>
-            <input type="number" id="job-price">
-          </div>
-          <div>
-            <label>Pagamento</label>
-            <select id="job-payment">
-              <option value="transfer">Transfer</option>
-              <option value="cash">Cash</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="grid-2">
-          <div>
-            <label>Horas</label>
-            <input type="number" step="0.5" id="job-duration">
-          </div>
-          <div>
-            <label>Horário Entrada</label>
-            <input type="text" id="job-horario" placeholder="08:00">
-          </div>
-        </div>
-
-        <button class="btn btn-primary" onclick="saveJob()">Salvar</button>
-        <button class="btn" style="background:#334155; color:white;" onclick="toggleForm()">Cancelar</button>
-      </div>
-
-      <div id="jobs-container"></div>
-    </div>
-
-    <!-- ABA FINANCEIRO -->
-    <div id="tab-financeiro" class="hidden">
-      <div class="card">
-        <div class="card-title" style="margin-bottom:15px;">Resumo Financeiro (Semana Selecionada)</div>
-        <div class="grid-2">
-          <div class="stat-box">
-            <div style="color:var(--subtext); font-size:0.8rem;">Total Faturado</div>
-            <div class="stat-val" id="total-revenue" style="color:var(--success);">£0.00</div>
-          </div>
-          <div class="stat-box">
-            <div style="color:var(--subtext); font-size:0.8rem;">Total em Cash</div>
-            <div class="stat-val" id="total-cash" style="color:var(--warning);">£0.00</div>
-          </div>
-        </div>
-        <div class="stat-box" style="margin-top:10px;">
-          <div style="color:var(--subtext); font-size:0.8rem;">Total em Transferência</div>
-          <div class="stat-val" id="total-transfer" style="color:var(--accent);">£0.00</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ABA EQUIPE -->
-    <div id="tab-equipe" class="hidden">
-      <div class="card">
-        <div class="card-title" style="margin-bottom:15px;">Horas e Pagamentos da Equipe</div>
-        <div id="team-stats"></div>
-      </div>
-    </div>
-
-    <!-- ABA VISITAS -->
-    <div id="tab-visitas" class="hidden">
-      <button class="btn btn-primary" style="margin-bottom: 15px;" onclick="toggleVisitForm()">+ Nova Visita / Orçamento</button>
-      
-      <div id="visit-form" class="card hidden">
-        <h3 style="margin-bottom:10px;">Detalhes da Visita</h3>
-        <input type="hidden" id="visit-id">
-        <label>Nome do Cliente</label>
-        <input type="text" id="visit-client">
-        
-        <label>Endereço / Contato</label>
-        <input type="text" id="visit-contact">
-
-        <div class="grid-3">
-          <div>
-            <label>Quartos</label>
-            <input type="number" id="visit-bedrooms" value="0">
-          </div>
-          <div>
-            <label>Banheiros</label>
-            <input type="number" id="visit-bathrooms" value="0">
-          </div>
-          <div>
-            <label>Salas</label>
-            <input type="number" id="visit-livingrooms" value="0">
-          </div>
-        </div>
-
-        <div class="grid-2">
-          <div>
-            <label>Possui Pets?</label>
-            <select id="visit-pets">
-              <option value="Não">Não</option>
-              <option value="Sim (Cão)">Sim (Cão)</option>
-              <option value="Sim (Gato)">Sim (Gato)</option>
-              <option value="Sim (Outros)">Sim (Outros)</option>
-            </select>
-          </div>
-          <div>
-            <label>Possui Crianças?</label>
-            <select id="visit-kids">
-              <option value="Não">Não</option>
-              <option value="Sim">Sim</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="grid-2">
-          <div>
-            <label>Valor Proposto (£)</label>
-            <input type="number" id="visit-price" placeholder="80">
-          </div>
-          <div>
-            <label>Frequência</label>
-            <select id="visit-freq">
-              <option value="Semanal">Semanal</option>
-              <option value="Quinzenal">Quinzenal</option>
-              <option value="Mensal">Mensal</option>
-              <option value="Uma vez">Uma vez</option>
-            </select>
-          </div>
-        </div>
-
-        <label>Observações / Requisitos</label>
-        <textarea id="visit-notes" rows="3"></textarea>
-
-        <button class="btn btn-primary" onclick="saveVisit()">Salvar Visita</button>
-        <button class="btn" style="background:#334155; color:white;" onclick="toggleVisitForm()">Cancelar</button>
-      </div>
-
-      <div id="visits-list"></div>
+  <!-- ABA EQUIPE -->
+  <div id="tab-equipe" style="display:none;">
+    <div class="day-column">
+      <h3 style="color: var(--primary); margin-bottom: 12px;">Relatório da Equipe na Semana</h3>
+      <table class="team-table">
+        <thead>
+          <tr>
+            <th>Funcionário</th>
+            <th>Taxa (£/h)</th>
+            <th>Horas</th>
+            <th>A Receber (£)</th>
+          </tr>
+        </thead>
+        <tbody id="team-summary-body"></tbody>
+      </table>
     </div>
   </div>
 
   <script>
-    let appData = {
+    // Carregar dados salvos ou inicializar com o JSON do utilizador
+    let defaultData = {
+      currentWeek: 1,
+      teamMembers: [
+        { name: "Roberta", rate: 15 },
+        { name: "Lorruama", rate: 12.21 },
+        { name: "Victor Hugo", rate: 12.21 }
+      ],
       weeks: {
-        semana1: {
-          segunda: [
-            { id: "1", client: "Bernadette", duration: 10, price: 200, payment: "transfer", horario: "08:00" },
-            { id: "2", client: "Bushra", duration: 4, price: 84, payment: "transfer", horario: "10:45" },
-            { id: "3", client: "Katrina", duration: 5, price: 105, payment: "transfer", horario: "12:00" },
-            { id: "4", client: "Jessica", duration: 3, price: 63, payment: "transfer", horario: "13:35" },
-            { id: "5", client: "Rachel Nova", duration: 3.5, price: 73.5, payment: "cash", horario: "14:40" },
-            { id: "6", client: "Tom", duration: 3, price: 63, payment: "cash", horario: "15:40" },
-            { id: "7", client: "Rachel Fazendinha", duration: 3, price: 63, payment: "cash", horario: "16:40" }
-          ],
-          terca: [
-            { id: "8", client: "Rhiannon", duration: 4, price: 84, payment: "cash", horario: "08:00" },
-            { id: "9", client: "Sasha", duration: 3, price: 63, payment: "cash", horario: "09:00" },
-            { id: "10", client: "Phoebe", duration: 3, price: 63, payment: "cash", horario: "09:40" },
-            { id: "11", client: "Vanya", duration: 5, price: 100, payment: "transfer", horario: "10:20" },
-            { id: "12", client: "Brent", duration: 4, price: 84, payment: "transfer", horario: "11:35" },
-            { id: "13", client: "Rod", duration: 3, price: 63, payment: "transfer", horario: "12:25" },
-            { id: "14", client: "Anne Marie", duration: 2, price: 42, payment: "cash", horario: "13:40" },
-            { id: "15", client: "Caroline", duration: 2, price: 42, payment: "cash", horario: "14:30" },
-            { id: "16", client: "Carol", duration: 3, price: 63, payment: "transfer", horario: "15:10" },
-            { id: "17", client: "Rachel Porquinho", duration: 4, price: 84, payment: "cash", horario: "16:15" },
-            { id: "18", client: "Helen", duration: 4, price: 0, payment: "cash", horario: "17:35" }
-          ],
-          quarta: [
-            { id: "19", client: "Jo", duration: 6, price: 120, payment: "cash", horario: "08:00" },
-            { id: "20", client: "Katie Claverton", duration: 8, price: 160, payment: "transfer", horario: "09:30" },
-            { id: "21", client: "Angie", duration: 5, price: 105, payment: "transfer", horario: "11:20" },
-            { id: "22", client: "Sarah", duration: 4, price: 84, payment: "transfer", horario: "12:50" },
-            { id: "23", client: "Gemma", duration: 3, price: 63, payment: "transfer", horario: "13:45" },
-            { id: "24", client: "Jaime", duration: 2, price: 42, payment: "cash", horario: "14:35" },
-            { id: "25", client: "Sean", duration: 3, price: 63, payment: "cash", horario: "15:15" },
-            { id: "26", client: "Morwenna", duration: 6, price: 125, payment: "cash", horario: "16:20" }
-          ],
-          quinta: [
-            { id: "27", client: "Emma", duration: 4, price: 80, payment: "transfer", horario: "07:50" },
-            { id: "28", client: "Ian", duration: 3, price: 60, payment: "cash", horario: "09:20" },
-            { id: "29", client: "Anne", duration: 4, price: 88, payment: "transfer", horario: "10:00" },
-            { id: "30", client: "Lynne", duration: 4, price: 84, payment: "cash", horario: "10:55" },
-            { id: "31", client: "David", duration: 6, price: 120, payment: "transfer", horario: "12:15" },
-            { id: "32", client: "James", duration: 4, price: 84, payment: "cash", horario: "14:00" },
-            { id: "33", client: "Arabee", duration: 4, price: 84, payment: "transfer", horario: "15:00" },
-            { id: "34", client: "Jane", duration: 6, price: 120, payment: "cash", horario: "16:15" }
-          ],
-          sexta: [
-            { id: "35", client: "Bernadette", duration: 9, price: 180, payment: "transfer", horario: "08:00" },
-            { id: "36", client: "Pippa", duration: 6, price: 132, payment: "transfer", horario: "10:40" },
-            { id: "37", client: "Chris", duration: 3, price: 63, payment: "transfer", horario: "12:50" },
-            { id: "38", client: "Rob", duration: 3, price: 63, payment: "cash", horario: "13:50" },
-            { id: "39", client: "Tim", duration: 2, price: 42, payment: "transfer", horario: "14:40" }
-          ]
-        },
-        semana2: {
-          segunda: [
-            { id: "40", client: "Bernadette", duration: 10, price: 200, payment: "transfer" },
-            { id: "41", client: "Bushra", duration: 4, price: 84, payment: "transfer" },
-            { id: "42", client: "Jessica", duration: 3, price: 63, payment: "transfer" },
-            { id: "43", client: "Katrina", duration: 5, price: 105, payment: "transfer" },
-            { id: "44", client: "Rachel Nova", duration: 3.5, price: 73.5, payment: "cash" },
-            { id: "45", client: "Rachel Fazendinha", duration: 3, price: 63, payment: "cash" },
-            { id: "46", client: "Jacqueline", duration: 6, price: 120, payment: "cash" }
-          ],
-          terca: [
-            { id: "47", client: "Rhiannon", duration: 4, price: 84, payment: "cash" },
-            { id: "48", client: "Sasha", duration: 3, price: 63, payment: "cash" },
-            { id: "49", client: "Phoebe", duration: 3, price: 63, payment: "cash" },
-            { id: "50", client: "Rod", duration: 3, price: 63, payment: "transfer" },
-            { id: "51", client: "Caroline", duration: 2, price: 42, payment: "cash" },
-            { id: "52", client: "Carol", duration: 3, price: 63, payment: "transfer" },
-            { id: "53", client: "Brent", duration: 4, price: 84, payment: "transfer" },
-            { id: "54", client: "Vanya", duration: 5, price: 100, payment: "transfer" }
-          ],
-          quarta: [
-            { id: "55", client: "Jo", duration: 6, price: 120, payment: "cash" },
-            { id: "56", client: "Katie Claverton", duration: 8, price: 160, payment: "transfer" },
-            { id: "57", client: "Angie", duration: 5, price: 105, payment: "transfer" },
-            { id: "58", client: "Sarah", duration: 4, price: 84, payment: "transfer" },
-            { id: "59", client: "Rachel Porquinho", duration: 4, price: 84, payment: "cash" },
-            { id: "60", client: "Lucia", duration: 4, price: 84, payment: "transfer" },
-            { id: "61", client: "Sean", duration: 3, price: 63, payment: "cash" }
-          ],
-          quinta: [
-            { id: "62", client: "Emma", duration: 4, price: 80, payment: "transfer" },
-            { id: "63", client: "Ian", duration: 3, price: 60, payment: "cash" },
-            { id: "64", client: "Anne", duration: 4, price: 88, payment: "transfer" },
-            { id: "65", client: "Arabee", duration: 4, price: 84, payment: "transfer" },
-            { id: "66", client: "Laura", duration: 6, price: 120, payment: "transfer" },
-            { id: "67", client: "Jane", duration: 6, price: 120, payment: "cash" },
-            { id: "68", client: "Susie", duration: 3, price: 63, payment: "cash" },
-            { id: "69", client: "Julia", duration: 6, price: 120, payment: "transfer" }
-          ],
-          sexta: [
-            { id: "70", client: "Bernadette", duration: 9, price: 180, payment: "transfer" },
-            { id: "71", client: "Pippa", duration: 6, price: 132, payment: "transfer" },
-            { id: "72", client: "Chris", duration: 4, price: 84, payment: "transfer" },
-            { id: "73", client: "James", duration: 4, price: 84, payment: "cash" },
-            { id: "74", client: "Tim", duration: 2, price: 42, payment: "transfer" },
-            { id: "75", client: "Rob", duration: 3, price: 63, payment: "cash" }
-          ]
-        },
-        outros: {
-          geral: [
-            { id: "76", client: "Morwenna", duration: 6, price: 125, payment: "cash" },
-            { id: "77", client: "Valerie", duration: 4, price: 80, payment: "cash" },
-            { id: "78", client: "Helen", duration: 4, price: 88, payment: "cash" }
-          ]
+        1: {
+          dates: "21/09 a 25/09",
+          days: {
+            "segunda": [
+              { id: "ymdwvm3", name: "Bernadette", horario: "08:00", horarioFim: "10:30", hours: 10, value: 200, pay: "transfer", mensal: true, workers: ["Roberta", "Lorruama"] },
+              { id: "mk68t9u", name: "Bushra", horario: "10:45", horarioFim: "11:45", hours: 4, value: 84, pay: "transfer", mensal: true, workers: ["Roberta", "Lorruama"] },
+              { id: "nrp39bq", name: "Katrina", horario: "12:00", horarioFim: "13:15", hours: 5, value: 105, pay: "transfer", mensal: false, workers: ["Roberta"] },
+              { id: "7om2tov", name: "Jessica", horario: "13:35", horarioFim: "14:20", hours: 3, value: 63, pay: "transfer", mensal: false, workers: [] },
+              { id: "4293cb1", name: "Rachel Nova", horario: "14:40", horarioFim: "15:33", hours: 3.5, value: 73.5, pay: "cash", mensal: false, workers: [] }
+            ],
+            "terca": [
+              { id: "451pa4c", name: "Rhiannon", horario: "08:00", horarioFim: "08:48", hours: 4, value: 84, pay: "cash", mensal: false, workers: [] },
+              { id: "dqpmtce", name: "Sasha", horario: "09:00", horarioFim: "09:36", hours: 3, value: 63, pay: "cash", mensal: false, workers: ["Victor Hugo"] }
+            ],
+            "quarta": [], "quinta": [], "sexta": []
+          }
         }
-      },
-      visits: []
+      }
     };
 
-    if (localStorage.getItem('sm_cleaners_data')) {
-      appData = JSON.parse(localStorage.getItem('sm_cleaners_data'));
-    } else {
-      saveState();
+    let appData = JSON.parse(localStorage.getItem('sm_cleaners_v12')) || defaultData;
+
+    function saveData() {
+      localStorage.setItem('sm_cleaners_v12', JSON.stringify(appData));
     }
 
-    function saveState() {
-      localStorage.setItem('sm_cleaners_data', JSON.stringify(appData));
-    }
-
-    let currentWeek = 'semana1';
-
-    function switchTab(tab) {
-      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-      document.querySelectorAll('.container > div').forEach(div => div.classList.add('hidden'));
-      event.target.classList.add('active');
-      document.getElementById('tab-' + tab).classList.remove('hidden');
-    }
-
-    function setWeek(week) {
-      currentWeek = week;
-      document.querySelectorAll('.week-btn').forEach(btn => btn.classList.remove('active'));
-      document.getElementById('btn-' + (week === 'semana1' ? 'sem1' : week === 'semana2' ? 'sem2' : 'outros')).classList.add('active');
-      renderJobs();
-      renderFinance();
-      renderTeam();
-    }
-
-    function toggleForm() {
-      document.getElementById('job-form').classList.toggle('hidden');
-    }
-
-    function saveJob() {
-      const id = document.getElementById('job-id').value;
-      const week = document.getElementById('job-week').value;
-      const day = document.getElementById('job-day').value;
-      const client = document.getElementById('job-client').value;
-      const price = parseFloat(document.getElementById('job-price').value) || 0;
-      const payment = document.getElementById('job-payment').value;
-      const duration = parseFloat(document.getElementById('job-duration').value) || 0;
-      const horario = document.getElementById('job-horario').value;
-
-      if(!client) return alert('Informe o cliente.');
-
-      const newJob = { id: id || Date.now().toString(), client, price, payment, duration, horario };
-
-      if(!appData.weeks[week]) appData.weeks[week] = {};
-      if(!appData.weeks[week][day]) appData.weeks[week][day] = [];
-
-      appData.weeks[week][day].push(newJob);
-      saveState();
-      toggleForm();
-      renderJobs();
-      renderFinance();
-    }
-
-    function deleteJob(week, day, id) {
-      if(confirm('Excluir este agendamento?')) {
-        appData.weeks[week][day] = appData.weeks[week][day].filter(j => j.id !== id);
-        saveState();
-        renderJobs();
-        renderFinance();
+    function renderAgenda() {
+      const weekNum = appData.currentWeek;
+      if (!appData.weeks[weekNum]) {
+        appData.weeks[weekNum] = { dates: "Semana Selecionada", days: { segunda: [], terca: [], quarta: [], quinta: [], sexta: [] } };
       }
-    }
 
-    function renderJobs() {
-      const container = document.getElementById('jobs-container');
-      const weekData = appData.weeks[currentWeek] || {};
-      const daysOrder = ["segunda", "terca", "quarta", "quinta", "sexta", "geral"];
-      const dayNames = { segunda: "Segunda-feira", terca: "Terça-feira", quarta: "Quarta-feira", quinta: "Quinta-feira", sexta: "Sexta-feira", geral: "Lista Geral" };
+      const weekData = appData.weeks[weekNum];
+      document.getElementById('week-label').innerText = `Semana ${weekNum} (${weekData.dates || ''})`;
 
-      let html = '';
-      daysOrder.forEach(day => {
-        const dayJobs = weekData[day] || [];
-        if(dayJobs.length > 0) {
-          html += `<div class="day-header">${dayNames[day]}</div>`;
-          dayJobs.forEach(j => {
-            html += `
-              <div class="job-item">
-                <div class="job-info">
-                  <div class="job-title">${j.client}</div>
-                  <div class="job-sub">${j.horario ? '🕒 ' + j.horario + ' | ' : ''}⏱️ ${j.duration}h | £${j.price}</div>
-                </div>
-                <div>
-                  <span class="badge ${j.payment.toLowerCase() === 'cash' ? 'badge-cash' : 'badge-transfer'}">${j.payment.toUpperCase()}</span>
-                  <button style="background:none; border:none; color:var(--danger); margin-left:8px; font-weight:bold; cursor:pointer;" onclick="deleteJob('${currentWeek}', '${day}', '${j.id}')">✕</button>
+      const container = document.getElementById('days-container');
+      container.innerHTML = '';
+
+      const dayNames = ["segunda", "terca", "quarta", "quinta", "sexta"];
+      
+      dayNames.forEach(day => {
+        const clients = weekData.days[day] || [];
+        let totalHours = clients.reduce((acc, c) => acc + (parseFloat(c.hours) || 0), 0);
+        let totalValue = clients.reduce((acc, c) => acc + (parseFloat(c.value) || 0), 0);
+
+        let dayHtml = `
+          <div class="day-column">
+            <div class="day-header">
+              <span class="day-title">${day.charAt(0).toUpperCase() + day.slice(1)}-feira</span>
+              <span class="day-stats">${totalHours}h | £${totalValue.toFixed(2)}</span>
+            </div>
+        `;
+
+        clients.forEach((client, idx) => {
+          dayHtml += `
+            <div class="card">
+              <div class="card-header">
+                <span class="client-name">${client.name}</span>
+                <div class="actions">
+                  <button class="btn-icon" onclick="moveClient('${day}', ${idx}, -1)">▲</button>
+                  <button class="btn-icon" onclick="moveClient('${day}', ${idx}, 1)">▼</button>
+                  <button class="btn-icon" onclick="deleteClient('${day}', ${idx})" style="color:#ef4444;">✕</button>
                 </div>
               </div>
-            `;
-          });
-        }
-      });
-      container.innerHTML = html || '<p style="text-align:center; color:var(--subtext); margin-top:20px;">Nenhum agendamento cadastrado.</p>';
-    }
-
-    function renderFinance() {
-      const weekData = appData.weeks[currentWeek] || {};
-      let total = 0, cash = 0, transfer = 0;
-
-      Object.keys(weekData).forEach(day => {
-        weekData[day].forEach(j => {
-          total += j.price;
-          if(j.payment.toLowerCase() === 'cash') cash += j.price;
-          else transfer += j.price;
+              <div class="card-body">
+                <div>🕒 ${client.horario || '--:--'} | ⏱️ ${client.hours}h | £${client.value}</div>
+                <div>
+                  <span class="badge badge-${client.pay}">${client.pay}</span>
+                  ${client.mensal ? '<span class="badge badge-mensal">MENSAL</span>' : ''}
+                </div>
+              </div>
+              <div class="workers-section">
+                <span style="color:var(--text-muted);">Trabalhou nesta casa:</span>
+                <div class="workers-list">
+                  ${appData.teamMembers.map(m => {
+                    const isAssigned = (client.workers || []).includes(m.name);
+                    return `<span class="worker-chip ${isAssigned ? 'selected' : ''}" onclick="toggleWorker('${day}',${idx}, '${m.name}')">${m.name}</span>`;
+                  }).join('')}
+                </div>
+              </div>
+            </div>
+          `;
         });
-      });
 
-      document.getElementById('total-revenue').innerText = `£${total.toFixed(2)}`;
-      document.getElementById('total-cash').innerText = `£${cash.toFixed(2)}`;
-      document.getElementById('total-transfer').innerText = `£${transfer.toFixed(2)}`;
+        dayHtml += `</div>`;
+        container.innerHTML += dayHtml;
+      });
     }
 
-    function renderTeam() {
-      const teamData = {
-        semana1: [
-          { name: "Roberta", rate: 15.00, hours: 33.93 },
-          { name: "Lorruama", rate: 12.21, hours: 33.93 },
-          { name: "Victor Hugo", rate: 12.21, hours: 21.80 }
-        ],
-        semana2: [
-          { name: "Roberta", rate: 15.00, hours: 32.00 },
-          { name: "Lorruama", rate: 12.21, hours: 32.00 },
-          { name: "Victor Hugo", rate: 12.21, hours: 20.00 }
-        ],
-        outros: []
-      };
+    function moveClient(day, index, direction) {
+      const list = appData.weeks[appData.currentWeek].days[day];
+      const targetIndex = index + direction;
+      if (targetIndex < 0 || targetIndex >= list.length) return;
 
-      const members = teamData[currentWeek] || [];
-      const teamContainer = document.getElementById('team-stats');
+      const temp = list[index];
+      list[index] = list[targetIndex];
+      list[targetIndex] = temp;
+
+      saveData();
+      renderAgenda();
+    }
+
+    function toggleWorker(day, clientIdx, workerName) {
+      const client = appData.weeks[appData.currentWeek].days[day][clientIdx];
+      if (!client.workers) client.workers = [];
       
-      if(members.length === 0) {
-        teamContainer.innerHTML = '<p style="text-align:center; color:var(--subtext);">Sem dados de equipe para esta seleção.</p>';
-        return;
+      const wIdx = client.workers.indexOf(workerName);
+      if (wIdx > -1) {
+        client.workers.splice(wIdx, 1);
+      } else {
+        client.workers.push(workerName);
       }
 
-      teamContainer.innerHTML = members.map(member => {
-        const pay = member.hours * member.rate;
-        return `
-          <div style="padding:10px 0; border-bottom:1px solid #334155;">
-            <div style="font-weight:bold; color:var(--accent);">${member.name} (£${member.rate.toFixed(2)}/h)</div>
-            <div style="font-size:0.9rem; color:var(--subtext);">Horas trabalhadas: <strong>${member.hours.toFixed(2)}h</strong></div>
-            <div style="font-size:0.9rem; color:var(--success);">Pagamento total: <strong>£${pay.toFixed(2)}</strong></div>
-          </div>
-        `;
-      }).join('');
+      saveData();
+      renderAgenda();
+      renderTeamSummary();
     }
 
-    // VISITAS
-    function toggleVisitForm() {
-      document.getElementById('visit-form').classList.toggle('hidden');
-    }
-
-    function saveVisit() {
-      const client = document.getElementById('visit-client').value;
-      const contact = document.getElementById('visit-contact').value;
-      const bedrooms = document.getElementById('visit-bedrooms').value;
-      const bathrooms = document.getElementById('visit-bathrooms').value;
-      const livingrooms = document.getElementById('visit-livingrooms').value;
-      const pets = document.getElementById('visit-pets').value;
-      const kids = document.getElementById('visit-kids').value;
-      const price = document.getElementById('visit-price').value;
-      const freq = document.getElementById('visit-freq').value;
-      const notes = document.getElementById('visit-notes').value;
-
-      if(!client) return alert('Informe o nome do cliente.');
-
-      appData.visits.push({
-        id: Date.now().toString(),
-        client, contact, bedrooms, bathrooms, livingrooms, pets, kids, price, freq, notes
-      });
-
-      saveState();
-      toggleVisitForm();
-      renderVisits();
-    }
-
-    function deleteVisit(id) {
-      if(confirm('Excluir esta visita?')) {
-        appData.visits = appData.visits.filter(v => v.id !== id);
-        saveState();
-        renderVisits();
+    function deleteClient(day, idx) {
+      if (confirm("Deseja remover este agendamento?")) {
+        appData.weeks[appData.currentWeek].days[day].splice(idx, 1);
+        saveData();
+        renderAgenda();
+        renderTeamSummary();
       }
     }
 
-    function renderVisits() {
-      const visitsList = document.getElementById('visits-list');
-      let html = '';
-      appData.visits.forEach(v => {
-        html += `
-          <div class="card">
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-              <div class="card-title">${v.client}</div>
-              <button style="background:none; border:none; color:var(--danger); font-weight:bold; cursor:pointer;" onclick="deleteVisit('${v.id}')">✕</button>
-            </div>
-            <div style="font-size:0.85rem; color:var(--subtext); margin:5px 0;">📍 ${v.contact || 'Sem endereço'}</div>
-            <div style="font-size:0.85rem; color:var(--accent); margin-bottom:8px;">
-              🛏️ ${v.bedrooms} quart(s) | 🚿 ${v.bathrooms} banh(s) | 🛋️ ${v.livingrooms} sala(s)
-            </div>
-            <div style="font-size:0.85rem; color:var(--subtext); margin-bottom:8px;">
-              🐾 Pets: ${v.pets} | 👶 Crianças: ${v.kids}
-            </div>
-            <div style="font-size:0.9rem; font-weight:bold; color:var(--success); margin-bottom:5px;">
-              £${v.price || 0} (${v.freq})
-            </div>
-            ${v.notes ? `<div style="font-size:0.85rem; color:var(--subtext); font-style:italic;">"${v.notes}"</div>` : ''}
-          </div>
-        `;
-      });
-      visitsList.innerHTML = html || '<p style="text-align:center; color:var(--subtext);">Nenhuma visita registrada.</p>';
+    function addNewClient() {
+      const name = prompt("Nome do Cliente:");
+      if (!name) return;
+      const day = prompt("Dia da semana (segunda, terca, quarta, quinta, sexta):", "segunda").toLowerCase();
+      const hours = prompt("Duração (em horas):", "3");
+      const value = prompt("Valor (£):", "63");
+
+      if (appData.weeks[appData.currentWeek].days[day]) {
+        appData.weeks[appData.currentWeek].days[day].push({
+          id: Math.random().toString(36).substr(2, 7),
+          name: name,
+          hours: parseFloat(hours) || 0,
+          value: parseFloat(value) || 0,
+          pay: "cash",
+          workers: []
+        });
+        saveData();
+        renderAgenda();
+      }
     }
 
-    // Inicialização
-    renderJobs();
-    renderFinance();
-    renderTeam();
-    renderVisits();
+    function renderTeamSummary() {
+      const tbody = document.getElementById('team-summary-body');
+      tbody.innerHTML = '';
+
+      const currentWeekDays = appData.weeks[appData.currentWeek]?.days || {};
+      
+      appData.teamMembers.forEach(member => {
+        let memberHours = 0;
+
+        Object.keys(currentWeekDays).forEach(day => {
+          currentWeekDays[day].forEach(client => {
+            if ((client.workers || []).includes(member.name)) {
+              let workersCount = client.workers.length || 1;
+              memberHours += (parseFloat(client.hours) || 0) / workersCount;
+            }
+          });
+        });
+
+        let totalPay = memberHours * member.rate;
+
+        tbody.innerHTML += `
+          <tr>
+            <td><strong>${member.name}</strong></td>
+            <td>£${member.rate.toFixed(2)}</td>
+            <td>${memberHours.toFixed(2)}h</td>
+            <td><strong style="color:var(--primary)">£${totalPay.toFixed(2)}</strong></td>
+          </tr>
+        `;
+      });
+    }
+
+    function changeWeek(dir) {
+      appData.currentWeek += dir;
+      if (appData.currentWeek < 1) appData.currentWeek = 1;
+      saveData();
+      renderAgenda();
+      renderTeamSummary();
+    }
+
+    function switchTab(tab) {
+      document.getElementById('tab-agenda').style.display = (tab === 'agenda') ? 'block' : 'none';
+      document.getElementById('tab-equipe').style.display = (tab === 'equipe') ? 'block' : 'none';
+      
+      document.querySelectorAll('nav.tabs button').forEach(b => b.classList.remove('active'));
+      event.target.classList.add('active');
+    }
+
+    // Inicializar
+    renderAgenda();
+    renderTeamSummary();
   </script>
 </body>
 </html>
