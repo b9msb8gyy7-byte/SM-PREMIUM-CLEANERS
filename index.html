@@ -51,12 +51,15 @@
     .btn-icon { border: 1px solid var(--border-color); background: #1e293b; cursor: pointer; font-size: 11px; color: var(--text-muted); width: 28px; height: 28px; border-radius: 6px; display: flex; align-items: center; justify-content: center; }
 
     .card-body { font-size: 13px; color: var(--text-muted); display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 6px; }
-    .card-input-inline { width: 55px; background: #1e293b; border: 1px solid var(--border-color); color: #fff; padding: 4px 6px; border-radius: 4px; font-size: 12px; font-weight: 600; text-align: center; }
+    .card-input-inline { width: 60px; background: #1e293b; border: 1px solid var(--border-color); color: #fff; padding: 4px 6px; border-radius: 4px; font-size: 12px; font-weight: 600; text-align: center; }
     
     .badge { display: inline-block; padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; color: white; text-transform: uppercase; cursor: pointer; }
     .badge-transfer { background-color: var(--tag-transfer); }
     .badge-cash { background-color: var(--tag-cash); }
     .badge-mensal { background-color: var(--tag-mensal); }
+
+    .time-row { display: flex; align-items: center; gap: 6px; font-size: 12px; margin-bottom: 6px; color: var(--text-muted); }
+    .time-input { background: #1e293b; border: 1px solid var(--border-color); color: #fff; padding: 3px 6px; border-radius: 4px; font-size: 12px; font-weight: 600; width: 65px; text-align: center; }
 
     .time-per-person { font-size: 11px; color: var(--primary); margin-top: 4px; font-style: italic; }
 
@@ -64,6 +67,7 @@
     .workers-list { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
     .worker-chip { background: #334155; color: #cbd5e1; padding: 4px 8px; border-radius: 6px; font-size: 11px; cursor: pointer; font-weight: 600; }
     .worker-chip.selected { background: var(--primary); color: #0f172a; }
+    .worker-chip.owner { background: #d97706; color: #fff; }
 
     .team-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
     .team-table th, .team-table td { padding: 10px; border: 1px solid var(--border-color); text-align: left; font-size: 13px; }
@@ -127,7 +131,7 @@
         <thead>
           <tr>
             <th>Funcionário</th>
-            <th>Taxa (£/h)</th>
+            <th>Taxa (£/h) / Função</th>
             <th>Horas Trabalhadas</th>
             <th>A Receber (£)</th>
           </tr>
@@ -272,106 +276,108 @@
     const exactListData = {
       selectedWeekKey: "semana1",
       teamMembers: [
-        { name: "Roberta", rate: 15 },
-        { name: "Lorruama", rate: 12.21 },
-        { name: "Victor Hugo", rate: 12.21 }
+        { name: "Roberta", rate: 15, isOwner: false },
+        { name: "Lorruama", rate: 12.21, isOwner: false },
+        { name: "Victor Hugo", rate: 12.21, isOwner: false },
+        { name: "Suzana", rate: 0, isOwner: true },
+        { name: "Márcio", rate: 0, isOwner: true }
       ],
       visits: [],
       weeks: {
         semana1: {
           segunda: [
-            { id: "s1_seg_1", name: "Bernadette", hours: 10, value: 200, pay: "transfer", mensal: true, workers: ["Roberta", "Lorruama"] },
-            { id: "s1_seg_2", name: "Bushra", hours: 4, value: 84, pay: "transfer", mensal: true, workers: ["Roberta", "Lorruama"] },
-            { id: "s1_seg_3", name: "Jessica", hours: 3, value: 63, pay: "transfer", mensal: false, workers: [] },
-            { id: "s1_seg_4", name: "Katrina", hours: 5, value: 105, pay: "transfer", mensal: false, workers: [] },
-            { id: "s1_seg_5", name: "Rachel Nova", hours: 3.5, value: 73.5, pay: "cash", mensal: false, workers: [] },
-            { id: "s1_seg_6", name: "Rachel Fazendinha", hours: 3, value: 63, pay: "cash", mensal: false, workers: [] },
-            { id: "s1_seg_7", name: "Jeanette", hours: 2, value: 42, pay: "cash", mensal: false, workers: [] }
+            { id: "s1_seg_1", name: "Bernadette", horario: "08:00", horarioFim: "10:30", hours: 10, value: 200, pay: "transfer", mensal: true, workers: ["Roberta", "Lorruama", "Suzana", "Márcio"] },
+            { id: "s1_seg_2", name: "Bushra", horario: "10:45", horarioFim: "11:45", hours: 4, value: 84, pay: "transfer", mensal: true, workers: ["Roberta", "Lorruama"] },
+            { id: "s1_seg_3", name: "Jessica", horario: "12:00", horarioFim: "13:30", hours: 3, value: 63, pay: "transfer", mensal: false, workers: [] },
+            { id: "s1_seg_4", name: "Katrina", horario: "13:35", horarioFim: "14:50", hours: 5, value: 105, pay: "transfer", mensal: false, workers: [] },
+            { id: "s1_seg_5", name: "Rachel Nova", horario: "15:00", horarioFim: "16:00", hours: 3.5, value: 73.5, pay: "cash", mensal: false, workers: [] },
+            { id: "s1_seg_6", name: "Rachel Fazendinha", horario: "16:10", horarioFim: "17:10", hours: 3, value: 63, pay: "cash", mensal: false, workers: [] },
+            { id: "s1_seg_7", name: "Jeanette", horario: "17:20", horarioFim: "18:20", hours: 2, value: 42, pay: "cash", mensal: false, workers: [] }
           ],
           terca: [
-            { id: "s1_ter_1", name: "Rhiannon", hours: 4, value: 84, pay: "cash", mensal: false, workers: [] },
-            { id: "s1_ter_2", name: "Sasha", hours: 3, value: 63, pay: "cash", mensal: false, workers: ["Victor Hugo"] },
-            { id: "s1_ter_3", name: "Phoebe", hours: 3, value: 63, pay: "cash", mensal: false, workers: [] },
-            { id: "s1_ter_4", name: "Georgie", hours: 4, value: 84, pay: "transfer", mensal: false, workers: [] },
-            { id: "s1_ter_5", name: "Rod", hours: 3, value: 63, pay: "transfer", mensal: false, workers: [] },
-            { id: "s1_ter_6", name: "Lindsay", hours: 3, value: 60, pay: "cash", mensal: false, workers: [] },
-            { id: "s1_ter_7", name: "Caroline", hours: 2, value: 42, pay: "cash", mensal: false, workers: [] },
-            { id: "s1_ter_8", name: "Tom", hours: 3, value: 63, pay: "cash", mensal: false, workers: [] },
-            { id: "s1_ter_9", name: "Ella", hours: 2, value: 42, pay: "cash", mensal: false, workers: [] }
+            { id: "s1_ter_1", name: "Rhiannon", horario: "08:00", horarioFim: "09:00", hours: 4, value: 84, pay: "cash", mensal: false, workers: [] },
+            { id: "s1_ter_2", name: "Sasha", horario: "09:10", horarioFim: "10:10", hours: 3, value: 63, pay: "cash", mensal: false, workers: ["Victor Hugo"] },
+            { id: "s1_ter_3", name: "Phoebe", horario: "10:20", horarioFim: "11:20", hours: 3, value: 63, pay: "cash", mensal: false, workers: [] },
+            { id: "s1_ter_4", name: "Georgie", horario: "11:30", horarioFim: "12:30", hours: 4, value: 84, pay: "transfer", mensal: false, workers: [] },
+            { id: "s1_ter_5", name: "Rod", horario: "12:40", horarioFim: "13:40", hours: 3, value: 63, pay: "transfer", mensal: false, workers: [] },
+            { id: "s1_ter_6", name: "Lindsay", horario: "13:50", horarioFim: "14:50", hours: 3, value: 60, pay: "cash", mensal: false, workers: [] },
+            { id: "s1_ter_7", name: "Caroline", horario: "15:00", horarioFim: "16:00", hours: 2, value: 42, pay: "cash", mensal: false, workers: [] },
+            { id: "s1_ter_8", name: "Tom", horario: "16:10", horarioFim: "17:10", hours: 3, value: 63, pay: "cash", mensal: false, workers: [] },
+            { id: "s1_ter_9", name: "Ella", horario: "17:20", horarioFim: "18:20", hours: 2, value: 42, pay: "cash", mensal: false, workers: [] }
           ],
           quarta: [
-            { id: "s1_qua_1", name: "Jo", hours: 6, value: 120, pay: "cash", mensal: false, workers: [] },
-            { id: "s1_qua_2", name: "Katie Claverton", hours: 8, value: 160, pay: "transfer", mensal: false, workers: [] },
-            { id: "s1_qua_3", name: "Angie", hours: 5, value: 105, pay: "transfer", mensal: false, workers: [] },
-            { id: "s1_qua_4", name: "Jaime", hours: 3, value: 63, pay: "cash", mensal: false, workers: [] },
-            { id: "s1_qua_5", name: "Katherine", hours: 3, value: 63, pay: "transfer", mensal: false, workers: [] },
-            { id: "s1_qua_6", name: "Anne Marie", hours: 2, value: 42, pay: "cash", mensal: false, workers: [] }
+            { id: "s1_qua_1", name: "Jo", horario: "08:00", horarioFim: "10:00", hours: 6, value: 120, pay: "cash", mensal: false, workers: [] },
+            { id: "s1_qua_2", name: "Katie Claverton", horario: "10:10", horarioFim: "12:10", hours: 8, value: 160, pay: "transfer", mensal: false, workers: [] },
+            { id: "s1_qua_3", name: "Angie", horario: "12:20", horarioFim: "14:00", hours: 5, value: 105, pay: "transfer", mensal: false, workers: [] },
+            { id: "s1_qua_4", name: "Jaime", horario: "14:10", horarioFim: "15:10", hours: 3, value: 63, pay: "cash", mensal: false, workers: [] },
+            { id: "s1_qua_5", name: "Katherine", horario: "15:20", horarioFim: "16:20", hours: 3, value: 63, pay: "transfer", mensal: false, workers: [] },
+            { id: "s1_qua_6", name: "Anne Marie", horario: "16:30", horarioFim: "17:30", hours: 2, value: 42, pay: "cash", mensal: false, workers: [] }
           ],
           quinta: [
-            { id: "s1_qui_1", name: "Emma", hours: 4, value: 80, pay: "transfer", mensal: false, workers: [] },
-            { id: "s1_qui_2", name: "Gemma", hours: 3, value: 63, pay: "transfer", mensal: false, workers: [] },
-            { id: "s1_qui_3", name: "Ian", hours: 3, value: 60, pay: "cash", mensal: false, workers: [] },
-            { id: "s1_qui_4", name: "Anne", hours: 4, value: 88, pay: "transfer", mensal: false, workers: [] },
-            { id: "s1_qui_5", name: "Lynne", hours: 4, value: 84, pay: "cash", mensal: false, workers: [] },
-            { id: "s1_qui_6", name: "Arabee", hours: 4, value: 84, pay: "transfer", mensal: false, workers: [] },
-            { id: "s1_qui_7", name: "Laura", hours: 6, value: 120, pay: "transfer", mensal: false, workers: [] },
-            { id: "s1_qui_8", name: "Julia", hours: 6, value: 120, pay: "transfer", mensal: false, workers: [] }
+            { id: "s1_qui_1", name: "Emma", horario: "08:00", horarioFim: "09:20", hours: 4, value: 80, pay: "transfer", mensal: false, workers: [] },
+            { id: "s1_qui_2", name: "Gemma", horario: "09:30", horarioFim: "10:30", hours: 3, value: 63, pay: "transfer", mensal: false, workers: [] },
+            { id: "s1_qui_3", name: "Ian", horario: "10:40", horarioFim: "11:40", hours: 3, value: 60, pay: "cash", mensal: false, workers: [] },
+            { id: "s1_qui_4", name: "Anne", horario: "11:50", horarioFim: "13:00", hours: 4, value: 88, pay: "transfer", mensal: false, workers: [] },
+            { id: "s1_qui_5", name: "Lynne", horario: "13:10", horarioFim: "14:20", hours: 4, value: 84, pay: "cash", mensal: false, workers: [] },
+            { id: "s1_qui_6", name: "Arabee", horario: "14:30", horarioFim: "15:40", hours: 4, value: 84, pay: "transfer", mensal: false, workers: [] },
+            { id: "s1_qui_7", name: "Laura", horario: "15:50", horarioFim: "17:30", hours: 6, value: 120, pay: "transfer", mensal: false, workers: [] },
+            { id: "s1_qui_8", name: "Julia", horario: "17:40", horarioFim: "19:00", hours: 6, value: 120, pay: "transfer", mensal: false, workers: [] }
           ],
           sexta: [
-            { id: "s1_sex_1", name: "Bernadette", hours: 9, value: 180, pay: "transfer", mensal: true, workers: [] },
-            { id: "s1_sex_2", name: "Pippa", hours: 6, value: 132, pay: "transfer", mensal: false, workers: [] },
-            { id: "s1_sex_3", name: "Chris", hours: 4, value: 84, pay: "transfer", mensal: false, workers: [] },
-            { id: "s1_sex_4", name: "Tim", hours: 2, value: 42, pay: "transfer", mensal: false, workers: [] },
-            { id: "s1_sex_5", name: "Rob", hours: 3, value: 63, pay: "cash", mensal: false, workers: [] },
-            { id: "s1_sex_6", name: "James", hours: 4, value: 84, pay: "cash", mensal: false, workers: [] }
+            { id: "s1_sex_1", name: "Bernadette", horario: "08:00", horarioFim: "10:15", hours: 9, value: 180, pay: "transfer", mensal: true, workers: [] },
+            { id: "s1_sex_2", name: "Pippa", horario: "10:30", horarioFim: "12:00", hours: 6, value: 132, pay: "transfer", mensal: false, workers: [] },
+            { id: "s1_sex_3", name: "Chris", horario: "12:10", horarioFim: "13:10", hours: 4, value: 84, pay: "transfer", mensal: false, workers: [] },
+            { id: "s1_sex_4", name: "Tim", horario: "13:20", horarioFim: "14:20", hours: 2, value: 42, pay: "transfer", mensal: false, workers: [] },
+            { id: "s1_sex_5", name: "Rob", horario: "14:30", horarioFim: "15:30", hours: 3, value: 63, pay: "cash", mensal: false, workers: [] },
+            { id: "s1_sex_6", name: "James", horario: "15:40", horarioFim: "16:40", hours: 4, value: 84, pay: "cash", mensal: false, workers: [] }
           ]
         },
         semana2: {
           segunda: [
-            { id: "s2_seg_1", name: "Bernadette", hours: 10, value: 200, pay: "transfer", mensal: true, workers: [] },
-            { id: "s2_seg_2", name: "Bushra", hours: 4, value: 84, pay: "transfer", mensal: true, workers: [] },
-            { id: "s2_seg_3", name: "Jessica", hours: 3, value: 63, pay: "transfer", mensal: false, workers: [] },
-            { id: "s2_seg_4", name: "Katrina", hours: 5, value: 105, pay: "transfer", mensal: false, workers: [] },
-            { id: "s2_seg_5", name: "Rachel Nova", hours: 3.5, value: 73.5, pay: "cash", mensal: false, workers: [] },
-            { id: "s2_seg_6", name: "Rachel Fazendinha", hours: 3, value: 63, pay: "cash", mensal: false, workers: [] },
-            { id: "s2_seg_7", name: "Jacqueline", hours: 6, value: 120, pay: "cash", mensal: false, workers: [] }
+            { id: "s2_seg_1", name: "Bernadette", horario: "08:00", horarioFim: "10:30", hours: 10, value: 200, pay: "transfer", mensal: true, workers: [] },
+            { id: "s2_seg_2", name: "Bushra", horario: "10:45", horarioFim: "11:45", hours: 4, value: 84, pay: "transfer", mensal: true, workers: [] },
+            { id: "s2_seg_3", name: "Jessica", horario: "12:00", horarioFim: "13:00", hours: 3, value: 63, pay: "transfer", mensal: false, workers: [] },
+            { id: "s2_seg_4", name: "Katrina", horario: "13:10", horarioFim: "14:30", hours: 5, value: 105, pay: "transfer", mensal: false, workers: [] },
+            { id: "s2_seg_5", name: "Rachel Nova", horario: "14:40", horarioFim: "15:40", hours: 3.5, value: 73.5, pay: "cash", mensal: false, workers: [] },
+            { id: "s2_seg_6", name: "Rachel Fazendinha", horario: "15:50", horarioFim: "16:50", hours: 3, value: 63, pay: "cash", mensal: false, workers: [] },
+            { id: "s2_seg_7", name: "Jacqueline", horario: "17:00", horarioFim: "18:30", hours: 6, value: 120, pay: "cash", mensal: false, workers: [] }
           ],
           terca: [
-            { id: "s2_ter_1", name: "Rhiannon", hours: 4, value: 84, pay: "cash", mensal: false, workers: [] },
-            { id: "s2_ter_2", name: "Sasha", hours: 3, value: 63, pay: "cash", mensal: false, workers: [] },
-            { id: "s2_ter_3", name: "Phoebe", hours: 3, value: 63, pay: "cash", mensal: false, workers: [] },
-            { id: "s2_ter_4", name: "Rod", hours: 3, value: 63, pay: "transfer", mensal: false, workers: [] },
-            { id: "s2_ter_5", name: "Caroline", hours: 2, value: 42, pay: "cash", mensal: false, workers: [] },
-            { id: "s2_ter_6", name: "Carol", hours: 3, value: 63, pay: "transfer", mensal: false, workers: [] },
-            { id: "s2_ter_7", name: "Brent", hours: 4, value: 84, pay: "transfer", mensal: false, workers: [] },
-            { id: "s2_ter_8", name: "Vanya", hours: 5, value: 100, pay: "transfer", mensal: false, workers: [] }
+            { id: "s2_ter_1", name: "Rhiannon", horario: "08:00", horarioFim: "09:00", hours: 4, value: 84, pay: "cash", mensal: false, workers: [] },
+            { id: "s2_ter_2", name: "Sasha", horario: "09:10", horarioFim: "10:10", hours: 3, value: 63, pay: "cash", mensal: false, workers: [] },
+            { id: "s2_ter_3", name: "Phoebe", horario: "10:20", horarioFim: "11:20", hours: 3, value: 63, pay: "cash", mensal: false, workers: [] },
+            { id: "s2_ter_4", name: "Rod", horario: "11:30", horarioFim: "12:30", hours: 3, value: 63, pay: "transfer", mensal: false, workers: [] },
+            { id: "s2_ter_5", name: "Caroline", horario: "12:40", horarioFim: "13:40", hours: 2, value: 42, pay: "cash", mensal: false, workers: [] },
+            { id: "s2_ter_6", name: "Carol", horario: "13:50", horarioFim: "14:50", hours: 3, value: 63, pay: "transfer", mensal: false, workers: [] },
+            { id: "s2_ter_7", name: "Brent", horario: "15:00", horarioFim: "16:00", hours: 4, value: 84, pay: "transfer", mensal: false, workers: [] },
+            { id: "s2_ter_8", name: "Vanya", horario: "16:10", horarioFim: "17:30", hours: 5, value: 100, pay: "transfer", mensal: false, workers: [] }
           ],
           quarta: [
-            { id: "s2_qua_1", name: "Jo", hours: 6, value: 120, pay: "cash", mensal: false, workers: [] },
-            { id: "s2_qua_2", name: "Katie Claverton", hours: 8, value: 160, pay: "transfer", mensal: false, workers: [] },
-            { id: "s2_qua_3", name: "Angie", hours: 5, value: 105, pay: "transfer", mensal: false, workers: [] },
-            { id: "s2_qua_4", name: "Sarah", hours: 4, value: 84, pay: "transfer", mensal: false, workers: [] },
-            { id: "s2_qua_5", name: "Rachel Porquinho", hours: 4, value: 84, pay: "cash", mensal: false, workers: [] },
-            { id: "s2_qua_6", name: "Lucia", hours: 4, value: 84, pay: "transfer", mensal: false, workers: [] },
-            { id: "s2_qua_7", name: "Sean", hours: 3, value: 63, pay: "cash", mensal: false, workers: [] }
+            { id: "s2_qua_1", name: "Jo", horario: "08:00", horarioFim: "09:30", hours: 6, value: 120, pay: "cash", mensal: false, workers: [] },
+            { id: "s2_qua_2", name: "Katie Claverton", horario: "09:40", horarioFim: "11:40", hours: 8, value: 160, pay: "transfer", mensal: false, workers: [] },
+            { id: "s2_qua_3", name: "Angie", horario: "11:50", horarioFim: "13:00", hours: 5, value: 105, pay: "transfer", mensal: false, workers: [] },
+            { id: "s2_qua_4", name: "Sarah", horario: "13:10", horarioFim: "14:10", hours: 4, value: 84, pay: "transfer", mensal: false, workers: [] },
+            { id: "s2_qua_5", name: "Rachel Porquinho", horario: "14:20", horarioFim: "15:20", hours: 4, value: 84, pay: "cash", mensal: false, workers: [] },
+            { id: "s2_qua_6", name: "Lucia", horario: "15:30", horarioFim: "16:30", hours: 4, value: 84, pay: "transfer", mensal: false, workers: [] },
+            { id: "s2_qua_7", name: "Sean", horario: "16:40", horarioFim: "17:40", hours: 3, value: 63, pay: "cash", mensal: false, workers: [] }
           ],
           quinta: [
-            { id: "s2_qui_1", name: "Emma", hours: 4, value: 80, pay: "transfer", mensal: false, workers: [] },
-            { id: "s2_qui_2", name: "Ian", hours: 3, value: 60, pay: "cash", mensal: false, workers: [] },
-            { id: "s2_qui_3", name: "Anne", hours: 4, value: 88, pay: "transfer", mensal: false, workers: [] },
-            { id: "s2_qui_4", name: "Arabee", hours: 4, value: 84, pay: "transfer", mensal: false, workers: [] },
-            { id: "s2_qui_5", name: "Laura", hours: 6, value: 120, pay: "transfer", mensal: false, workers: [] },
-            { id: "s2_qui_6", name: "Jane", hours: 6, value: 120, pay: "cash", mensal: false, workers: [] },
-            { id: "s2_qui_7", name: "Susie", hours: 3, value: 63, pay: "cash", mensal: false, workers: [] },
-            { id: "s2_qui_8", name: "Julia", hours: 6, value: 120, pay: "transfer", mensal: false, workers: [] }
+            { id: "s2_qui_1", name: "Emma", horario: "08:00", horarioFim: "09:00", hours: 4, value: 80, pay: "transfer", mensal: false, workers: [] },
+            { id: "s2_qui_2", name: "Ian", horario: "09:10", horarioFim: "10:10", hours: 3, value: 60, pay: "cash", mensal: false, workers: [] },
+            { id: "s2_qui_3", name: "Anne", horario: "10:20", horarioFim: "11:20", hours: 4, value: 88, pay: "transfer", mensal: false, workers: [] },
+            { id: "s2_qui_4", name: "Arabee", horario: "11:30", horarioFim: "12:30", hours: 4, value: 84, pay: "transfer", mensal: false, workers: [] },
+            { id: "s2_qui_5", name: "Laura", horario: "12:40", horarioFim: "14:10", hours: 6, value: 120, pay: "transfer", mensal: false, workers: [] },
+            { id: "s2_qui_6", name: "Jane", horario: "14:20", horarioFim: "15:50", hours: 6, value: 120, pay: "cash", mensal: false, workers: [] },
+            { id: "s2_qui_7", name: "Susie", horario: "16:00", horarioFim: "17:00", hours: 3, value: 63, pay: "cash", mensal: false, workers: [] },
+            { id: "s2_qui_8", name: "Julia", horario: "17:10", horarioFim: "18:40", hours: 6, value: 120, pay: "transfer", mensal: false, workers: [] }
           ],
           sexta: [
-            { id: "s2_sex_1", name: "Bernadette", hours: 9, value: 180, pay: "transfer", mensal: true, workers: [] },
-            { id: "s2_sex_2", name: "Pippa", hours: 6, value: 132, pay: "transfer", mensal: false, workers: [] },
-            { id: "s2_sex_3", name: "Chris", hours: 4, value: 84, pay: "transfer", mensal: false, workers: [] },
-            { id: "s2_sex_4", name: "James", hours: 4, value: 84, pay: "cash", mensal: false, workers: [] },
-            { id: "s2_sex_5", name: "Tim", hours: 2, value: 42, pay: "transfer", mensal: false, workers: [] },
-            { id: "s2_sex_6", name: "Rob", hours: 3, value: 63, pay: "cash", mensal: false, workers: [] }
+            { id: "s2_sex_1", name: "Bernadette", horario: "08:00", horarioFim: "10:15", hours: 9, value: 180, pay: "transfer", mensal: true, workers: [] },
+            { id: "s2_sex_2", name: "Pippa", horario: "10:30", horarioFim: "12:00", hours: 6, value: 132, pay: "transfer", mensal: false, workers: [] },
+            { id: "s2_sex_3", name: "Chris", horario: "12:10", horarioFim: "13:10", hours: 4, value: 84, pay: "transfer", mensal: false, workers: [] },
+            { id: "s2_sex_4", name: "James", horario: "13:20", horarioFim: "14:20", hours: 4, value: 84, pay: "cash", mensal: false, workers: [] },
+            { id: "s2_sex_5", name: "Tim", horario: "14:30", horarioFim: "15:30", hours: 2, value: 42, pay: "transfer", mensal: false, workers: [] },
+            { id: "s2_sex_6", name: "Rob", horario: "15:40", horarioFim: "16:40", hours: 3, value: 63, pay: "cash", mensal: false, workers: [] }
           ]
         },
         outros: {
@@ -384,12 +390,12 @@
       }
     };
 
-    let appData = JSON.parse(localStorage.getItem('sm_cleaners_v16')) || exactListData;
+    let appData = JSON.parse(localStorage.getItem('sm_cleaners_v17')) || exactListData;
 
     let visitForm = { pet: false, criancas: false, quartos: 0, lavabo: 0, salas: 0, bathrooms: [{ type: 'Shower' }], piso: 'Piso' };
 
     function saveData() {
-      localStorage.setItem('sm_cleaners_v16', JSON.stringify(appData));
+      localStorage.setItem('sm_cleaners_v17', JSON.stringify(appData));
     }
 
     function selectWeek(weekKey) {
@@ -402,6 +408,28 @@
       renderAgenda();
       renderTeamSummary();
       renderFinancialSummary();
+    }
+
+    // CALCULAR HORÁRIO AUTOMÁTICO DE FIM
+    function calculateEndTime(startTimeStr, totalHours, numPeople) {
+      if (!startTimeStr) return "";
+      let parts = startTimeStr.split(":");
+      if (parts.length < 2) return "";
+      
+      let startH = parseInt(parts[0]) || 0;
+      let startM = parseInt(parts[1]) || 0;
+
+      let people = numPeople > 0 ? numPeople : 1;
+      let actualDurationHours = (parseFloat(totalHours) || 0) / people;
+
+      let durationMinutes = Math.round(actualDurationHours * 60);
+
+      let totalStartMinutes = startH * 60 + startM + durationMinutes;
+      let endH = Math.floor(totalStartMinutes / 60) % 24;
+      let endM = totalStartMinutes % 60;
+
+      let pad = (n) => n.toString().padStart(2, '0');
+      return `${pad(endH)}:${pad(endM)}`;
     }
 
     function renderAgenda() {
@@ -428,10 +456,17 @@
 
         clients.forEach((client, idx) => {
           let numWorkers = (client.workers || []).length;
+          
+          // Re-calcular automaticamente o horário fim caso tenha horário de início
+          let computedEnd = calculateEndTime(client.horario, client.hours, numWorkers);
+          if (computedEnd && (!client.horarioFim || client.autoTime !== false)) {
+            client.horarioFim = computedEnd;
+          }
+
           let timePerPersonText = "";
           if (numWorkers > 0) {
             let hoursPerPerson = (parseFloat(client.hours) || 0) / numWorkers;
-            timePerPersonText = `➔ ${hoursPerPerson.toFixed(2)}h por pessoa (${numWorkers} ${numWorkers === 1 ? 'pessoa' : 'pessoas'})`;
+            timePerPersonText = `➔ ${hoursPerPerson.toFixed(2)}h na casa (${numWorkers} ${numWorkers === 1 ? 'pessoa' : 'pessoas'})`;
           }
 
           dayHtml += `
@@ -444,6 +479,14 @@
                   <button class="btn-icon" onclick="deleteClient('${day}', ${idx})" style="color:#ef4444;">✕</button>
                 </div>
               </div>
+
+              <div class="time-row">
+                <span>🕒 Entrada:</span>
+                <input type="text" class="time-input" value="${client.horario || ''}" placeholder="08:00" onchange="updateClientTime('${day}', ${idx}, 'horario', this.value)">
+                <span>Saída:</span>
+                <input type="text" class="time-input" value="${client.horarioFim || ''}" placeholder="10:30" onchange="updateClientTime('${day}', ${idx}, 'horarioFim', this.value)">
+              </div>
+
               <div class="card-body">
                 <div>
                   ⏱️ <input type="number" class="card-input-inline" value="${client.hours}" onchange="updateClientField('${day}', ${idx}, 'hours', this.value)"> h | 
@@ -462,7 +505,8 @@
                 <div class="workers-list">
                   ${appData.teamMembers.map(m => {
                     const isAssigned = (client.workers || []).includes(m.name);
-                    return `<span class="worker-chip ${isAssigned ? 'selected' : ''}" onclick="toggleWorker('${day}',${idx}, '${m.name}')">${m.name}</span>`;
+                    const isOwnerClass = m.isOwner ? 'owner' : '';
+                    return `<span class="worker-chip ${isAssigned ? 'selected ' + isOwnerClass : ''}" onclick="toggleWorker('${day}',${idx}, '${m.name}')">${m.name}</span>`;
                   }).join('')}
                 </div>
               </div>
@@ -473,6 +517,15 @@
         dayHtml += `</div>`;
         container.innerHTML += dayHtml;
       });
+    }
+
+    function updateClientTime(day, idx, field, val) {
+      appData.weeks[appData.selectedWeekKey][day][idx][field] = val;
+      if (field === 'horarioFim') {
+        appData.weeks[appData.selectedWeekKey][day][idx].autoTime = false;
+      }
+      saveData();
+      renderAgenda();
     }
 
     function updateClientField(day, idx, field, val) {
@@ -548,6 +601,8 @@
         appData.weeks[appData.selectedWeekKey][day].push({
           id: Math.random().toString(36).substr(2, 7),
           name: name,
+          horario: "08:00",
+          horarioFim: "",
           hours: parseFloat(hours) || 0,
           value: parseFloat(value) || 0,
           pay: "cash",
@@ -565,26 +620,74 @@
 
       const currentWeekDays = appData.weeks[appData.selectedWeekKey] || {};
       
-      appData.teamMembers.forEach(member => {
-        let memberHours = 0;
+      let memberHoursMap = {};
+      let memberPayMap = {};
 
-        Object.keys(currentWeekDays).forEach(day => {
-          (currentWeekDays[day] || []).forEach(client => {
-            if ((client.workers || []).includes(member.name)) {
-              let workersCount = client.workers.length || 1;
-              memberHours += (parseFloat(client.hours) || 0) / workersCount;
-            }
+      appData.teamMembers.forEach(m => {
+        memberHoursMap[m.name] = 0;
+        memberPayMap[m.name] = 0;
+      });
+
+      // Processar cada casa da semana
+      Object.keys(currentWeekDays).forEach(day => {
+        (currentWeekDays[day] || []).forEach(client => {
+          let assigned = client.workers || [];
+          if (assigned.length === 0) return;
+
+          let houseValue = parseFloat(client.value) || 0;
+          let totalHours = parseFloat(client.hours) || 0;
+
+          // Separar em funcionários normais e sócios (Suzana e Márcio)
+          let normalWorkers = [];
+          let ownersAssigned = [];
+
+          assigned.forEach(wName => {
+            let mObj = appData.teamMembers.find(t => t.name === wName);
+            if (mObj && mObj.isOwner) ownersAssigned.push(wName);
+            else normalWorkers.push(wName);
           });
-        });
 
-        let totalPay = memberHours * member.rate;
+          let hoursPerPerson = totalHours / assigned.length;
+
+          // Pagar funcionários normais com base na sua taxa por hora dividida pelo nº de pessoas
+          let totalPaidToNormalWorkers = 0;
+          normalWorkers.forEach(wName => {
+            let mObj = appData.teamMembers.find(t => t.name === wName);
+            let payForThisHouse = hoursPerPerson * mObj.rate;
+            memberHoursMap[wName] += hoursPerPerson;
+            memberPayMap[wName] += payForThisHouse;
+            totalPaidToNormalWorkers += payForThisHouse;
+          });
+
+          // O valor excedente (Valor da Casa - Custo Funcionários) vai para Suzana e Márcio
+          let surplus = houseValue - totalPaidToNormalWorkers;
+
+          if (ownersAssigned.length > 0) {
+            let surplusPerOwner = surplus / ownersAssigned.length;
+            ownersAssigned.forEach(oName => {
+              memberHoursMap[oName] += hoursPerPerson;
+              memberPayMap[oName] += surplusPerOwner;
+            });
+          } else {
+            // Se nenhum dos sócios trabalhou na casa, o excedente é dividido entre Suzana e Márcio como Lucro da Empresa
+            let surplusPerOwner = surplus / 2;
+            memberPayMap["Suzana"] += surplusPerOwner;
+            memberPayMap["Márcio"] += surplusPerOwner;
+          }
+        });
+      });
+
+      appData.teamMembers.forEach(member => {
+        let h = memberHoursMap[member.name] || 0;
+        let p = memberPayMap[member.name] || 0;
+        let rateDisplay = member.isOwner ? `<span style="color:var(--accent)">Excedente / Empresa</span>` : `£${member.rate.toFixed(2)}`;
 
         tbody.innerHTML += `
           <tr>
-            <td><strong>${member.name}</strong></td>
-            <td>£${member.rate.toFixed(2)}</td>
-            <td>${memberHours.toFixed(2)}h</td>
-            <td><strong style="color:var(--primary)">£${totalPay.toFixed(2)}</strong></td>
+            <td><strong>${member.name}</strong> ${member.isOwner ? '👑' : ''}</td>
+            <td>${rateDisplay}</td>
+            <td>${h.toFixed(2)}h</td>
+            <td><strong style="color:var(--primary)">£${p.toFixed(2)}</strong></td>
           </tr>
         `;
       });
