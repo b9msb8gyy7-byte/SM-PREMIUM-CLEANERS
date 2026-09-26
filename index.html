@@ -94,11 +94,16 @@
 
     .calc-row { display: flex; align-items: center; gap: 10px; background: #0f172a; padding: 12px; border-radius: 6px; border: 1px solid var(--border-color); margin-top: 10px; }
   </style>
+
+  <!-- FIREBASE SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 </head>
 <body>
 
   <header>
     <h1>SM Premium Cleaners</h1>
+    <div id="sync-status" style="font-size: 11px; color: var(--primary); margin-top: 4px;">🔄 Conectando em tempo real...</div>
   </header>
 
   <nav class="tabs">
@@ -273,6 +278,21 @@
   </div>
 
   <script>
+    // CONFIGURAÇÃO DO FIREBASE
+    const firebaseConfig = {
+      apiKey: "AIzaSyCgqJMnBcwCI4eEEOS3wxa3uFrmcXMN9dA",
+      authDomain: "cleaningapp-f7e58.firebaseapp.com",
+      databaseURL: "https://cleaningapp-f7e58-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "cleaningapp-f7e58",
+      storageBucket: "cleaningapp-f7e58.firebasestorage.app",
+      messagingSenderId: "499257274532",
+      appId: "1:499257274532:web:4dea74fe36d6258d793631"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+    const appDataRef = db.ref('sm_cleaners_app_data');
+
     const exactListData = {
       selectedWeekKey: "semana1",
       teamMembers: [
@@ -390,12 +410,30 @@
       }
     };
 
-    let appData = JSON.parse(localStorage.getItem('sm_cleaners_v17')) || exactListData;
-
+    let appData = exactListData;
     let visitForm = { pet: false, criancas: false, quartos: 0, lavabo: 0, salas: 0, bathrooms: [{ type: 'Shower' }], piso: 'Piso' };
 
+    // Escutar mudanças no Firebase em TEMPO REAL
+    appDataRef.on('value', (snapshot) => {
+      const val = snapshot.val();
+      if (val) {
+        appData = val;
+        document.getElementById('sync-status').innerText = '🟢 Conectado em Tempo Real (Firebase)';
+      } else {
+        // Se a base de dados estiver vazia, grava a lista inicial
+        saveData();
+      }
+      renderAgenda();
+      renderTeamSummary();
+      renderFinancialSummary();
+      renderSavedVisits();
+    }, (error) => {
+      document.getElementById('sync-status').innerText = '🔴 Erro na ligação à nuvem';
+      console.error(error);
+    });
+
     function saveData() {
-      localStorage.setItem('sm_cleaners_v17', JSON.stringify(appData));
+      appDataRef.set(appData);
     }
 
     function selectWeek(weekKey) {
@@ -410,7 +448,6 @@
       renderFinancialSummary();
     }
 
-    // CALCULAR HORÁRIO AUTOMÁTICO DE FIM
     function calculateEndTime(startTimeStr, totalHours, numPeople) {
       if (!startTimeStr) return "";
       let parts = startTimeStr.split(":");
@@ -457,7 +494,6 @@
         clients.forEach((client, idx) => {
           let numWorkers = (client.workers || []).length;
           
-          // Re-calcular automaticamente o horário fim caso tenha horário de início
           let computedEnd = calculateEndTime(client.horario, client.hours, numWorkers);
           if (computedEnd && (!client.horarioFim || client.autoTime !== false)) {
             client.horarioFim = computedEnd;
@@ -525,30 +561,23 @@
         appData.weeks[appData.selectedWeekKey][day][idx].autoTime = false;
       }
       saveData();
-      renderAgenda();
     }
 
     function updateClientField(day, idx, field, val) {
       appData.weeks[appData.selectedWeekKey][day][idx][field] = parseFloat(val) || 0;
       saveData();
-      renderAgenda();
-      renderTeamSummary();
-      renderFinancialSummary();
     }
 
     function togglePayType(day, idx) {
       let current = appData.weeks[appData.selectedWeekKey][day][idx].pay || 'cash';
       appData.weeks[appData.selectedWeekKey][day][idx].pay = (current === 'cash') ? 'transfer' : 'cash';
       saveData();
-      renderAgenda();
-      renderFinancialSummary();
     }
 
     function toggleMensal(day, idx) {
       let current = appData.weeks[appData.selectedWeekKey][day][idx].mensal;
       appData.weeks[appData.selectedWeekKey][day][idx].mensal = !current;
       saveData();
-      renderAgenda();
     }
 
     function moveClient(day, index, direction) {
@@ -561,7 +590,6 @@
       list[targetIndex] = temp;
 
       saveData();
-      renderAgenda();
     }
 
     function toggleWorker(day, clientIdx, workerName) {
@@ -576,17 +604,12 @@
       }
 
       saveData();
-      renderAgenda();
-      renderTeamSummary();
     }
 
     function deleteClient(day, idx) {
       if (confirm("Deseja remover este cliente?")) {
         appData.weeks[appData.selectedWeekKey][day].splice(idx, 1);
         saveData();
-        renderAgenda();
-        renderTeamSummary();
-        renderFinancialSummary();
       }
     }
 
@@ -609,8 +632,6 @@
           workers: []
         });
         saveData();
-        renderAgenda();
-        renderFinancialSummary();
       }
     }
 
@@ -628,7 +649,6 @@
         memberPayMap[m.name] = 0;
       });
 
-      // Processar cada casa da semana
       Object.keys(currentWeekDays).forEach(day => {
         (currentWeekDays[day] || []).forEach(client => {
           let assigned = client.workers || [];
@@ -637,7 +657,6 @@
           let houseValue = parseFloat(client.value) || 0;
           let totalHours = parseFloat(client.hours) || 0;
 
-          // Separar em funcionários normais e sócios (Suzana e Márcio)
           let normalWorkers = [];
           let ownersAssigned = [];
 
@@ -649,7 +668,6 @@
 
           let hoursPerPerson = totalHours / assigned.length;
 
-          // Pagar funcionários normais com base na sua taxa por hora dividida pelo nº de pessoas
           let totalPaidToNormalWorkers = 0;
           normalWorkers.forEach(wName => {
             let mObj = appData.teamMembers.find(t => t.name === wName);
@@ -659,7 +677,6 @@
             totalPaidToNormalWorkers += payForThisHouse;
           });
 
-          // O valor excedente (Valor da Casa - Custo Funcionários) vai para Suzana e Márcio
           let surplus = houseValue - totalPaidToNormalWorkers;
 
           if (ownersAssigned.length > 0) {
@@ -669,7 +686,6 @@
               memberPayMap[oName] += surplusPerOwner;
             });
           } else {
-            // Se nenhum dos sócios trabalhou na casa, o excedente é dividido entre Suzana e Márcio como Lucro da Empresa
             let surplusPerOwner = surplus / 2;
             memberPayMap["Suzana"] += surplusPerOwner;
             memberPayMap["Márcio"] += surplusPerOwner;
@@ -824,7 +840,6 @@
       if (!appData.visits) appData.visits = [];
       appData.visits.push(newVisit);
       saveData();
-      renderSavedVisits();
       clearVisitForm();
       alert("Visita salva com sucesso!");
     }
@@ -848,8 +863,8 @@
               <p>📍 <strong>Endereço:</strong> ${v.endereco || 'N/A'}</p>
               <p>📌 <strong>Prioridades:</strong> ${v.prioridades || 'N/A'}</p>
               <p>🐾 Pet: ${v.pet ? 'Sim' : 'Não'} | 👶 Crianças: ${v.criancas ? 'Sim' : 'Não'}</p>
-              <p>🛏️ Quartos: ${v.quartos} | 🚪 Lavabo: ${v.lavabo} | 🛋️ Salas: ${v.salas} | 🚿 Banheiros: ${v.bathrooms.length}</p>
-              <p>🪵 Piso: ${v.piso} | ⏱️ Combinado: ${v.tempoComb}h | 💰 Total: £${v.total.toFixed(2)}</p>
+              <p>🛏️ Quartos: ${v.quartos} | 🚪 Lavabo: ${v.lavabo} | 🛋️ Salas: ${v.salas} | 🚿 Banheiros: ${v.bathrooms ? v.bathrooms.length : 0}</p>
+              <p>🪵 Piso: ${v.piso} | ⏱️ Combinado: ${v.tempoComb}h | 💰 Total: £${(v.total || 0).toFixed(2)}</p>
             </div>
           </div>
         `;
@@ -860,7 +875,6 @@
       if (confirm("Remover esta visita guardada?")) {
         appData.visits.splice(idx, 1);
         saveData();
-        renderSavedVisits();
       }
     }
 
@@ -885,20 +899,14 @@
     }
 
     function resetToInitialData() {
-      if (confirm("Tem certeza que deseja restaurar com a lista completa inicial?")) {
+      if (confirm("Tem certeza que deseja restaurar a lista inicial no Firebase?")) {
         appData = exactListData;
         saveData();
-        renderAgenda();
-        renderTeamSummary();
-        renderFinancialSummary();
-        renderSavedVisits();
       }
     }
 
-    // Inicializar
-    selectWeek(appData.selectedWeekKey || 'semana1');
+    // Inicializar formulários locais
     renderBathrooms();
-    renderSavedVisits();
   </script>
 </body>
 </html>
